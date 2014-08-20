@@ -107,12 +107,14 @@
 
 			if (selected.node !== null) {
 				dragged.point.m = 10000.0;
-
+//				layout.update(dragged);
+				
 				if (nodeSelected) {
 					nodeSelected(selected.node);
 				}
+				
 			}
-
+			
 			renderer.start();
 		});
 
@@ -141,8 +143,9 @@
 			if (dragged !== null && dragged.node !== null) {
 				dragged.point.p.x = p.x;
 				dragged.point.p.y = p.y;
+				layout.update(dragged);
 			}
-
+			
 			renderer.start();
 		});
 

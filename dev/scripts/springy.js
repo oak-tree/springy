@@ -465,10 +465,29 @@
 			type : "start",
 			layout : JSON.stringify(this.layoutData)
 		});
+		this.started = true;
+	}
+	WebWorker.prototype.restart = function() {
+		this.message("restart");
+	}
+	
+	WebWorker.prototype.updateNode = function(node) {
+		if (node === null ){
+			return;
+		}
+		this.physics.postMessage({
+			type : "update",
+			nodeData : JSON.stringify(node)
+		});
 	}
 
 	WebWorker.prototype.stop = function() {
 		this.message("stop");
+		this.started = false;
+	}
+	WebWorker.prototype.destroy = function() {
+		this.message("destory");
+		this.started = false;
 	}
 
 	WebWorker.prototype.message = function(message) {
@@ -477,6 +496,15 @@
 		});
 	}
 
+	/**
+	 * Start simulation if it's not running already. In case it's running then
+	 * the call is ignored, and none of the callbacks passed is ever executed.
+	 */
+	Layout.ForceDirected.prototype.update = function(node){
+		if (this.physics  && this.physics.started ){
+			this.physics.updateNode(node);
+		}
+	}
 	/**
 	 * Start simulation if it's not running already. In case it's running then
 	 * the call is ignored, and none of the callbacks passed is ever executed.
@@ -494,16 +522,19 @@
 			onRenderStart();
 		}
 		
-		if (this.physics) {
-			this.physics.stop();
+		if (!this.physics) {
+					this.physics = new WebWorker(this, this.graph, this.stiffness,
+					this.repulsion, this.damping, this.minEnergyThreshold);
+			
 		}
-		var physics = this.physics = new WebWorker(this, this.graph, this.stiffness,
-				this.repulsion, this.damping, this.minEnergyThreshold);
-		physics.start();
-
-		this.nodePoints = {}; // keep track of points associated with nodes
-		this.edgeSprings = {}; // keep track of springs associated with edges
-
+		
+		if (!this.physics.started){
+			this.physics.start();
+		} else {
+			this.physics.restart();
+		}
+		
+		
 		Springy.requestAnimationFrame(function step() {
 			// we dont tick it any more. just wait from webworker data
 

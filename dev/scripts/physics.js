@@ -1,13 +1,17 @@
 var layout = null;
 
+var Springy = {};
+importScripts('math.js');
+importScripts('basicgraph.js');
+
 self.addEventListener('message',  function(event){
 	
+	/* get graph data from event.data.graph*/
+	var data = {}  
+
 	switch (event.data.type) {
 			case "start":
-				
-				/* get graph data from event.data.graph*/
-				var data = {} 
-				data.layout = JSON.parse(event.data.layout);
+				data.layout = JSON.parse(event.data.layout);				
 				/*create the layout object */
 				layout = self.layout = new Layout.ForceDirected(new Graph(data.layout.graph) ,data.layout.stiffness ,data.layout.repulsion ,data.layout.damping ,data.layout.minEnergyThreshold,
 						data.layout.graph.edgeSprings,
@@ -17,11 +21,22 @@ self.addEventListener('message',  function(event){
 				/* run it */
 				layout.start();
 				break;
+			case "restart":
+				if (!layout._started){
+					layout.start()
+				}
+				break;
 			case "stop":
 				/* stop layout */
 				layout.stop();
 				break;
+			case "destroy":
+				/* stop layout */
+				self.close();
+				break;
 			case "update":
+				var nodeData = JSON.parse(event.data.nodeData);
+				layout.update(nodeData);
 				/* update graph data*/
 				//TODO update the graph data
 	}
@@ -29,67 +44,6 @@ self.addEventListener('message',  function(event){
 
 
 
-var Springy = {};
-
-//Basic Graph object to hold graph data
-Graph = function(graph) {
-	this.updateData(graph.adjacency, graph.nodes,graph.edges);
-}
-//function to update graph data
-Graph.prototype.updateData = function(adjacency, nodes,edges) {
-	this.adjacency = adjacency;
-	this.nodes = nodes;
-	this.edges = edges;
-}
-
-// find the edges from node1 to node2
-Graph.prototype.getEdges = function(node1, node2) {
-	if (node1.id in this.adjacency
-		&& node2.id in this.adjacency[node1.id]) {
-		return this.adjacency[node1.id][node2.id];
-	}
-
-	return [];
-};
-
-// Vector
-var Vector = Springy.Vector = function(x, y) {
-	this.x = x;
-	this.y = y;
-};
-
-Vector.random = function() {
-	return new Vector(10.0 * (Math.random() - 0.5),
-			10.0 * (Math.random() - 0.5));
-};
-
-Vector.prototype.add = function(v2) {
-	return new Vector(this.x + v2.x, this.y + v2.y);
-};
-
-Vector.prototype.subtract = function(v2) {
-	return new Vector(this.x - v2.x, this.y - v2.y);
-};
-
-Vector.prototype.multiply = function(n) {
-	return new Vector(this.x * n, this.y * n);
-};
-
-Vector.prototype.divide = function(n) {
-	return new Vector((this.x / n) || 0, (this.y / n) || 0); // Avoid divide
-};
-
-Vector.prototype.magnitude = function() {
-	return Math.sqrt(this.x * this.x + this.y * this.y);
-};
-
-Vector.prototype.normal = function() {
-	return new Vector(-this.y, this.x);
-};
-
-Vector.prototype.normalise = function() {
-	return this.divide(this.magnitude());
-};
 
 Layout = {}
 
@@ -105,10 +59,27 @@ Layout.ForceDirected = function(graph, stiffness, repulsion, damping,
 															// determine render
 															// stop
 
-	this.nodePoints = edgeSprings; // keep track of points associated with nodes
-	this.edgeSprings = nodePoints; // keep track of springs associated with edges
+	this.nodePoints = {};
+	this.edgeSprings = {};
+	
 };
 
+
+
+//update node while running the simulation
+Layout.ForceDirected.prototype.update = function(nodeData) {
+	var node = nodeData.node;
+	var point = nodeData.point
+	if (!(node.id in this.nodePoints)) {
+		return;
+	}
+	this._wait = true; // tell step to wait with update
+	this.nodePoints[node.id].m = point.m;
+	this.nodePoints[node.id].p.x =  point.p.x;
+	this.nodePoints[node.id].p.y =  point.p.y;
+	this._wait = false;
+	
+}	
 /**
  * Start simulation if it's not running already.
  * In case it's running then the call is ignored, and none of the callbacks passed is ever executed.
@@ -119,15 +90,18 @@ Layout.ForceDirected.prototype.start = function() {
 	if (this._started) return;
 	this._started = true;
 	this._stop = false;
-	var DEFAULT_STEP = 10;
+	var DEFAULT_STEP = 0;
 
 
 	var step = function(){
-		t.tick(0.03);
+		
+		if (!t._wait) {
+			t.tick(0.03);
 
 		//message worker creator to render(with the new calculated data)
-		postMessage({type:"update",calculated:{edgeSprings:t.edgeSprings,nodePoints:t.nodePoints,boundingBox:t.boundingBox}});
-
+			postMessage({type:"update",calculated:{edgeSprings:t.edgeSprings,nodePoints:t.nodePoints,boundingBox:t.boundingBox}});
+		}
+		
 		// stop simulation when energy of the system goes below a threshold
 		if (t._stop || t.totalEnergy() < t.minEnergyThreshold) {
 			t._started = false;
@@ -257,11 +231,11 @@ Layout.ForceDirected.prototype.updateBoundingBox = function() {
 };
 
 //Point
-Layout.ForceDirected.Point = function(position, mass) {
+var Point = Layout.ForceDirected.Point = function(position, mass,v,a) {
 	this.p = position; // position
 	this.m = mass; // mass
-	this.v = new Vector(0, 0); // velocity
-	this.a = new Vector(0, 0); // acceleration
+	this.v = v || new Vector(0, 0); // velocity
+	this.a = a || new Vector(0, 0); // acceleration
 };
 
 Layout.ForceDirected.Point.prototype.applyForce = function(force) {
