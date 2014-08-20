@@ -17,6 +17,15 @@ figure out how to show a network graph in a nice way.
 
 Try to imagine it as a bunch of springs connected to each other.
 
+Grunt + Webworker
+------------------
+install: run npm install
+run demo player/dev player: grunt server
+
+Todo: 
+1. clean the code
+2. allow webworker to get updated from u.i (there is a bug now that on update
+the coordinates are not vectored anymore. and therefore this failed
 
 Demo
 ----
