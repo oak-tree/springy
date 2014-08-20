@@ -1,6 +1,6 @@
 // Generated on 2014-01-16 using generator-mobile 0.0.2
 'use strict';
-var LIVERELOAD_PORT = 35729;
+var LIVERELOAD_PORT = 35727;
 var lrSnippet = require('connect-livereload')({
 	port : LIVERELOAD_PORT
 });
@@ -124,7 +124,7 @@ module.exports = function(grunt) {
 				},
 				connect : {
 					options : {
-						port : 9000,
+						port : 9005,
 						// // change this to '0.0.0.0' to access the server from
 						// outside
 						// // hostname: 'localhost'
