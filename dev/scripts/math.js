@@ -1,4 +1,3 @@
-
 // Vector
 var Vector = Springy.Vector = function(x, y) {
 	this.x = x;
@@ -9,6 +8,10 @@ Vector.random = function() {
 	return new Vector(10.0 * (Math.random() - 0.5),
 			10.0 * (Math.random() - 0.5));
 };
+
+Vector.SubTract = function(v1,v2) {
+	return new Vector(v1.x - v2.x, v1.y - v2.y);
+}
 
 Vector.prototype.add = function(v2) {
 	return new Vector(this.x + v2.x, this.y + v2.y);

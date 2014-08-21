@@ -29,7 +29,7 @@
 		var stiffness = params.stiffness || 400.0;
 		var repulsion = params.repulsion || 400.0;
 		var damping = params.damping || 0.5;
-		var minEnergyThreshold = params.minEnergyThreshold || 0.00001;
+		var minEnergyThreshold = params.minEnergyThreshold || 0.01;
 		var nodeSelected = params.nodeSelected || null;
 		var nodeImages = {};
 		var edgeLabelsUpright = true;

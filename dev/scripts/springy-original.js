@@ -39,50 +39,7 @@
 		Springy = root.Springy = {};
 	}
 
-// Vector
-var Vector = Springy.Vector = function(x, y) {
-	this.x = x;
-	this.y = y;
-};
-
-Vector.random = function() {
-	return new Vector(10.0 * (Math.random() - 0.5),
-			10.0 * (Math.random() - 0.5));
-};
-
-Vector.SubTract = function(v1,v2) {
-	return new Vector(v1.x - v2.x, v1.y - v2.y);
-}
-
-Vector.prototype.add = function(v2) {
-	return new Vector(this.x + v2.x, this.y + v2.y);
-};
-
-Vector.prototype.subtract = function(v2) {
-	return new Vector(this.x - v2.x, this.y - v2.y);
-};
-
-Vector.prototype.multiply = function(n) {
-	return new Vector(this.x * n, this.y * n);
-};
-
-Vector.prototype.divide = function(n) {
-	return new Vector((this.x / n) || 0, (this.y / n) || 0); // Avoid divide
-};
-
-Vector.prototype.magnitude = function() {
-	return Math.sqrt(this.x * this.x + this.y * this.y);
-};
-
-Vector.prototype.normal = function() {
-	return new Vector(-this.y, this.x);
-};
-
-Vector.prototype.normalise = function() {
-	return this.divide(this.magnitude());
-};
-
-var Graph = Springy.Graph = function() {
+	var Graph = Springy.Graph = function() {
 		this.nodeSet = {};
 		this.nodes = [];
 		this.edges = [];
@@ -346,8 +303,9 @@ var Graph = Springy.Graph = function() {
 			obj.graphChanged();
 		});
 	};
-// -----------
-	var Layout = Springy.Layout = (Springy.Layout  || {} );
+
+	// -----------
+	var Layout = Springy.Layout = {};
 
 	Layout.ForceDirected = function(graph, stiffness, repulsion, damping,
 			minEnergyThreshold) {
@@ -367,19 +325,59 @@ var Graph = Springy.Graph = function() {
 
 
 
-	//getter for point of node 
+		
 	Layout.ForceDirected.prototype.point = function(node) {
 		if (!(node.id in this.nodePoints)) {
+			// var mass = (node.data.mass !== undefined) ? node.data.mass : 1.0;
+			// this.nodePoints[node.id] = new Layout.ForceDirected.Point(Vector.random(),
+			// mass);
 			return null;
 		}
+
 		return this.nodePoints[node.id];
 	};
-	//getter for spring of edge
+
 	Layout.ForceDirected.prototype.spring = function(edge) {
+
 		// why edge should be in edge Springs?
 		if (!(edge.id in this.edgeSprings)) {
+			// var length = (edge.data.length !== undefined) ? edge.data.length
+			// : 1.0;
+			//			
+			// var existingSpring = false;
+			//			
+			// var from = this.graph.getEdges(edge.source, edge.target);
+			// from.forEach(function(e) {
+			// if (existingSpring === false && e.id in this.edgeSprings) {
+			// existingSpring = this.edgeSprings[e.id];
+			// }
+			// }, this);
+			//			
+			// if (existingSpring !== false) {
+			// return new Layout.ForceDirected.Spring(existingSpring.point1,
+			// existingSpring.point2, 0.0, 0.0);
+			// }
+			//			
+			// var to = this.graph.getEdges(edge.target, edge.source);
+			// from.forEach(function(e){
+			// if (existingSpring === false && e.id in this.edgeSprings) {
+			// existingSpring = this.edgeSprings[e.id];
+			// }
+			// }, this);
+			//			
+			// if (existingSpring !== false) {
+			// return new Layout.ForceDirected.Spring(existingSpring.point2,
+			// existingSpring.point1, 0.0, 0.0);
+			// }
+			//			
+			// this.edgeSprings[edge.id] = new Layout.ForceDirected.Spring(
+			// this.point(edge.source), this.point(edge.target), length,
+			// this.stiffness
+			// );
+
 			return null;
 		}
+
 		return this.edgeSprings[edge.id];
 	};
 
@@ -608,7 +606,66 @@ var Graph = Springy.Graph = function() {
 		return this.boundingBox;
 	};
 
-/**
+	
+	//#################################################### Basic Math ##################################################
+	// Vector
+	var Vector = Springy.Vector = function(x, y) {
+		this.x = x;
+		this.y = y;
+	};
+	
+	Vector.SubTract = function(v1,v2) {
+		return new Vector(v1.x - v2.x, v1.y - v2.y);
+	}
+
+	Vector.random = function() {
+		return new Vector(10.0 * (Math.random() - 0.5),
+				10.0 * (Math.random() - 0.5));
+	};
+
+	Vector.prototype.add = function(v2) {
+		return new Vector(this.x + v2.x, this.y + v2.y);
+	};
+
+	Vector.prototype.subtract = function(v2) {
+		return new Vector(this.x - v2.x, this.y - v2.y);
+	};
+
+	Vector.prototype.multiply = function(n) {
+		return new Vector(this.x * n, this.y * n);
+	};
+
+	Vector.prototype.divide = function(n) {
+		return new Vector((this.x / n) || 0, (this.y / n) || 0); // Avoid
+		// divide
+		// by zero
+		// errors..
+	};
+
+	Vector.prototype.magnitude = function() {
+		return Math.sqrt(this.x * this.x + this.y * this.y);
+	};
+
+	Vector.prototype.normal = function() {
+		return new Vector(-this.y, this.x);
+	};
+
+	Vector.prototype.normalise = function() {
+		return this.divide(this.magnitude());
+	};
+
+	// Layout.ForceDirected.Spring.prototype.distanceToPoint = function(point)
+	// {
+	// // hardcore vector arithmetic.. ohh yeah!
+	// // .. see
+	// http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment/865080#865080
+	// var n = this.point2.p.subtract(this.point1.p).normalise().normal();
+	// var ac = point.p.subtract(this.point1.p);
+	// return Math.abs(ac.x * n.x + ac.y * n.y);
+	// };
+
+	//#################################################### Render Code ##################################################
+	/**
 	 * Renderer handles the layout rendering loop
 	 * 
 	 * @param onRenderStop
@@ -667,7 +724,7 @@ var Graph = Springy.Graph = function() {
 	};
 
 	
-//#################################################### Helpers ##################################################
+	//#################################################### Helpers ##################################################
 	// Array.forEach implementation for IE support..
 	// https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/forEach
 	if (!Array.prototype.forEach) {
@@ -704,5 +761,4 @@ var Graph = Springy.Graph = function() {
 		}
 		return true;
 	};
-
 }).call(this);

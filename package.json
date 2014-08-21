@@ -29,6 +29,10 @@
     "prompt": "~0.2.13",
     "jshint-stylish": "~0.4.0",
     "grunt-concurrent": "~0.5.0",
-    "grunt-open": "~0.2.3"
+    "grunt-open": "~0.2.3",
+    "grunt-contrib-concat": "~0.5.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-usemin": "~2.3.0",
+    "grunt-contrib-copy": "~0.5.0"
   }
 }

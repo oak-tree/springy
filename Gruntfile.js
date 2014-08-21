@@ -48,11 +48,10 @@ module.exports = function(grunt) {
 				yeoman : yeomanConfig,
 				pkg : pkgConfig,
 				bowerConfig	 : bowerConfig,
-				// TODO: Make this conditional
 				watch : {
 					js : {
 						files : [ '<%= yeoman.app %>/scripts/{,*/}*.js' ],
-						tasks : [ 'jshint' ],
+						tasks : [ 'concat:graph','jshint' ],
 						options : {
 							livereload : true
 						}
@@ -68,10 +67,6 @@ module.exports = function(grunt) {
 						files : [ '<%= yeoman.app %>/graphics/{,*/}{png,jpg,jpeg,gif,webp,svg}' ],
 					},
 					
-					// compass: {
-					// files: ['<%= yeoman.app %>/styles/{,*/}*.{scss,sass}'],
-					// tasks: ['compass:server']
-					// },
 					livereload : {
 						options : {
 							livereload : LIVERELOAD_PORT,
@@ -125,29 +120,23 @@ module.exports = function(grunt) {
 				connect : {
 					options : {
 						port : 9005,
-						// // change this to '0.0.0.0' to access the server from
-						// outside
-						// // hostname: 'localhost'
+						// change this to '0.0.0.0' to access the server from outside
+						//  hostname: 'localhost'
 						hostname : '0.0.0.0',
-
 						middlewhere : function(connect) {
 							return [ function(req, res, next) {
-														
 								next();
-							} ]
+								  }]
 						}
 					},
-					
 					livereload : {
 						options : {
 							middleware : function(connect) {
 								return [
-										
 										lrSnippet,
 										mountFolder(connect, '.tmp'),
 										mountFolder(connect, yeomanConfig.app),
 										function(req, res, next) {
-											
 											next();
 										} ];
 							}
@@ -174,21 +163,6 @@ module.exports = function(grunt) {
 					server : {
 						path : 'http://localhost:<%= connect.options.port %>/player/demo.html'
 					}
-
-				// ,
-				// nexus4:{
-				// path:
-				// 'http://www.browserstack.com/start#os=android&os_version=4.2&device=LG+Nexus+4&speed=1&start=true&url=http://rnikitin.github.io/examples/jumbotron/'
-				// },
-				// nexus7:{
-				// path:
-				// 'http://www.browserstack.com/start#os=android&os_version=4.1&device=Google+Nexus+7&speed=1&start=true&url=http://rnikitin.github.io/examples/jumbotron/'
-				// },
-				// iphone5:{
-				// path:
-				// 'http://www.browserstack.com/start#os=ios&os_version=6.0&device=iPhone+5&speed=1&start=true&url=http://rnikitin.github.io/examples/jumbotron/'
-				// }
-
 				},
 				clean : {
 					dist : {
@@ -209,8 +183,7 @@ module.exports = function(grunt) {
 						reporter : require('jshint-stylish')
 					},
 					all : [ 'Gruntfile.js',
-							'<%= yeoman.app %>/scripts/{,*/}*.js',
-							'!<%= yeoman.app %>/scripts/vendor/*',
+							'<%= yeoman.app %>/scripts/**/*.js',
 							'test/spec/{,*/}*.js' ]
 				},
 				yuidoc : {
@@ -221,7 +194,6 @@ module.exports = function(grunt) {
 						url : '',
 						options : {
 							paths : '<%= pkg.source %>',
-							// themedir: 'path/to/custom/theme/',
 							outdir : '<%= pkg.doc %>/api'
 						}
 					}
@@ -242,10 +214,9 @@ module.exports = function(grunt) {
 							color : "blue"
 						} ],
 					// file: "report.md",
-
 					},
-					script : [ 'dev/scripts/**/*' ],
-					styles : [ 'source/styles/**/*' ],
+					script : [ '<%= yeoman.app %>/scripts/**/*' ],
+					styles : [ '<%= yeoman.app %>/styles/**/*' ],
 					test : [ 'test/*' ]
 				},
 				mocha : {
@@ -278,23 +249,20 @@ module.exports = function(grunt) {
 					prod : {
 						src : [ 'source/scripts/prod.js' ],
 						dest : 'source/scripts/main.js',
+					},
+					graph:{
+						src : [ '<%= yeoman.app %>/scripts/beginspringy.js',
+						        '<%= yeoman.app %>/scripts/math.js',
+						        '<%= yeoman.app %>/scripts/graph.js',
+						        '<%= yeoman.app %>/scripts/layout-forcedirect.js',
+						        '<%= yeoman.app %>/scripts/render.js',
+						        '<%= yeoman.app %>/scripts/helpers.js',
+						        '<%= yeoman.app %>/scripts/endspringy.js',				        
+						        ],
+						dest : '<%= yeoman.app %>/scripts/springy.js',
 					}
 
 				},
-				
-				rev : {
-					dist : {
-						files : {
-							src : [
-									'<%= yeoman.dist %>/scripts/{,*/}*.js',
-									'<%= yeoman.dist %>/styles/{,*/}*.css',
-									'<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp}',
-
-									'<%= yeoman.dist %>/styles/fonts/*' ]
-						}
-					}
-				},
-
 
 				useminPrepare : {
 					options : {
@@ -445,6 +413,19 @@ module.exports = function(grunt) {
 
 	grunt.registerTask('server', function(target) {
 		//TODO setup to support springy project
+		grunt.event.on('watch', function(action, filepath) {
+			// grunt.log.writeln(action,filepath);
+			grunt.log.writeln();
+			grunt.log.writeln("-----------------------");
+			grunt.log.writeln("file name: " + filepath + " has been " + action);
+			grunt.log.writeln("-----------------------");
+			
+			grunt.log.writeln("***********************");
+			grunt.log.writeln("running in server debug mode. sync this action with " +  yeomanConfig.dist); 
+			return grunt.task.run(['concat:graph']);
+		});
+		
+		
 		if (target === 'dist') {
 			return grunt.task
 					.run([ 'build', 'connect:dist:keepalive', 'open:server']);
@@ -454,18 +435,23 @@ module.exports = function(grunt) {
 					'watch' ]);
 		}
 
-		grunt.task.run(['clean:server','connect:livereload', 'open:server', 'watch' ]);
+		
+		grunt.task.run(['concat:graph','clean:server','connect:livereload', 'open:server', 'watch' ]);
 	});
 
 	grunt.registerTask('test', [ 'clean:server', 'concurrent:test',
 			'connect:test', 'mocha' ]);
 	
 	//TODO setup to support springy project
-	grunt.registerTask('build', [ 'clean:dist', 'concat:prod', 'useminPrepare',
-			'concat:generated', 'cssmin:generated', 'concat:prod',
-			'concurrent:dist', 'requirejs:dist', 'responsive_images:dev',
-			'uglify', 'copy:dist','copy:tinymce', 'rev', 'usemin', ]);
-	
+	grunt.registerTask('build', [ 'clean:dist', 'useminPrepare',
+			, 'concat:graph',
+			'concurrent:dist',
+			'copy:dist', 'usemin', ]);
+//	grunt.registerTask('build', [ 'clean:dist', 'concat:prod', 'useminPrepare',
+//	                  			'concat:generated', 'concat:graph',
+//	                  			'concurrent:dist',
+//	                  			'copy:dist', 'usemin', ]);
+//	
 	//TODO setup to support springy project
 	grunt.registerTask('default', 'mochaTest');
 

@@ -103,7 +103,8 @@ Layout.ForceDirected.prototype.start = function() {
 		}
 		
 		// stop simulation when energy of the system goes below a threshold
-		if (t._stop || t.totalEnergy() < t.minEnergyThreshold) {
+		console.debug(t.totalEnergy());
+		if (t._stop || (t.totalEnergy() < t.minEnergyThreshold)) {
 			t._started = false;
 			postMessage({type:"stop"});
 		} else {
@@ -231,7 +232,7 @@ Layout.ForceDirected.prototype.updateBoundingBox = function() {
 };
 
 //Point
-var Point = Layout.ForceDirected.Point = function(position, mass,v,a) {
+Layout.ForceDirected.Point = function(position, mass,v,a) {
 	this.p = position; // position
 	this.m = mass; // mass
 	this.v = v || new Vector(0, 0); // velocity
