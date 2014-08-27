@@ -103,12 +103,11 @@ Layout.ForceDirected.prototype.start = function() {
 		}
 		
 		// stop simulation when energy of the system goes below a threshold
-		console.debug(t.totalEnergy());
 		if (t._stop || (t.totalEnergy() < t.minEnergyThreshold)) {
 			t._started = false;
 			postMessage({type:"stop"});
 		} else {
-			setTimeout(step,DEFAULT_STEP);
+			setTimeout(step,DEFAULT_STEP); //TODO why do settimeout and not do a loop?
 		}
 	};
 	

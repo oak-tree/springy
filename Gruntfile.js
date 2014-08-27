@@ -255,6 +255,7 @@ module.exports = function(grunt) {
 						        '<%= yeoman.app %>/scripts/math.js',
 						        '<%= yeoman.app %>/scripts/graph.js',
 						        '<%= yeoman.app %>/scripts/layout-forcedirect.js',
+						        '<%= yeoman.app %>/scripts/layout-isom.js',
 						        '<%= yeoman.app %>/scripts/render.js',
 						        '<%= yeoman.app %>/scripts/helpers.js',
 						        '<%= yeoman.app %>/scripts/endspringy.js',				        

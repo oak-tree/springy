@@ -36,11 +36,12 @@ jQuery(function(){
     graph: graph,
     nodeSelected: function(node){
       console.log('Node selected: ' + JSON.stringify(node.data));
-    }
+    },
+    epoch:200,
   });
 });
 </script>
 
-<canvas id="springydemo" width="640" height="480" />
+<canvas id="springydemo" width="1000" height="800" />
 </body>
 </html>

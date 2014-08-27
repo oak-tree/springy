@@ -37,8 +37,21 @@
 		var canvas = this[0];
 		var ctx = canvas.getContext("2d");
 
-		var layout = this.layout = new Springy.Layout.ForceDirected(graph,
-				stiffness, repulsion, damping, minEnergyThreshold);
+		/* use for force direct * 
+//		var layout = this.layout = new Springy.Layout.ForceDirected(graph,
+//				stiffness, repulsion, damping, minEnergyThreshold);
+		/*use for isom */
+		var layout = this.layout = new Springy.Layout.ISOM(graph,{
+			epoch:params.epoch || 4000,
+			coolingFactor: params.coolingFactor ||0.1,//default 0.4
+			minAdaption:params.minAdaption ||0.15,
+			maxAdaption:params.maxAdaption || 0.8,
+			interval:params.interval ||3,
+			minRadius:params.minRadius ||0,
+			maxRadius:params.maxRadius || 10
+		})
+//				stiffness, repulsion, damping, minEnergyThreshold);
+		
 
 		// calculate bounding box of graph layout.. with ease-in
 		var currentBB = lastBoundingBox = layout.getBoundingBox();
