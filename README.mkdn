@@ -1,22 +1,43 @@
-Springy
+Springy++
 ====
-
-A force directed graph layout algorithm in JavaScript.
-
-[http://getspringy.com/](http://getspringy.com/)
+Basic Graph drawing library.Based on [https://github.com/dhotson/springy] (Springy)
 
 What is this?
 ----
+Springy is a force directed graph layout algorithm. 
+Springy++ is an extention of Springy. 
 
-Springy is a force directed graph layout algorithm.
+### Main differences are:
+
+#### User experince:
+ 1. It use webworker to do the calclation
+ 2. It allows more easliy to add new layout 
+ 3. It has ISOM layout as well 
+ 
+ 
+#### Developer aspect:
+ 1. Use Grunt task make developing faster. i.e grunt server.
+ 2. Use Grunt task to build new source[ since webworker should share some code with main module. some of the source have been splited to files in order to alllow web worker load it as well. grunt build =  concat all scripts together)
+ 3. 
+
+
 
 So what does this 'force directed' stuff mean anyway? Excellent question!
-
+----
 It basically means that it uses some real world physics to try and
 figure out how to show a network graph in a nice way.
 
 Try to imagine it as a bunch of springs connected to each other.
 
+So what does this 'ISOM' layout
+-----
+TODO -
+
+
+
+Code
+-----
+Currently in isom branch untill i will clean it a bit
 
 Demo
 ----
