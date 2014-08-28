@@ -7,13 +7,13 @@
 		this.graph = graph;
 		this.options = options;
 		this.epoch = options.epoch;
-		this.coolingFactor  = options.collingFactor;
+		this.coolingFactor  = options.coolingFactor;
 		this.minAdaption = options.minAdaption;
 		this.maxAdaption = options.maxAdaption;
 		this.interval = options.interval;
 		this.minRadius = options.minRadius;
 		this.maxRadius = options.maxRadius;
-		
+		this.iteration = 0;
 		this.nodePoints = {}; // keep track of points associated with nodes
 		this.resetBoundingBox();
 	};
@@ -35,9 +35,9 @@
 	 * return a string with all layout options
 	 */
 	Layout.ISOM.prototype.toString = function() {
-		return "ISOM .epoch: {0} collingFactor: {1} minAdaption: {2} maxAdaption: {3} interval: {4} minRadius: {5} maxRadius: {6}".format(
+		return "ISOM .epoch: {0} collingFactor: {1} minAdaption: {2} maxAdaption: {3} interval: {4} minRadius: {5} maxRadius: {6} iteration: {7}".format(
 				this.epoch, this.coolingFactor, this.minAdaption ,this.maxAdaption,
-				this.interval,	this.minRadius ,this.maxRadius);
+				this.interval,	this.minRadius ,this.maxRadius,this.iteration);
 	}
 	// getter for point of node
 	Layout.ISOM.prototype.point = function(node) {
@@ -85,6 +85,7 @@
 		this.edgeSprings = calculated.edgeSprings;
 		this.nodePoints = calculated.nodePoints;
 		this.boundingBox = calculated.boundingBox;
+		this.iteration++;
 	}
 
 	var WebWorker = Layout.ISOM.WebWorker = {};
@@ -196,7 +197,7 @@
 		}
 		
 		
-		if (this.isFirstRun()) {
+//		if (this.isFirstRun()) {
 			//
 		
 		
@@ -208,7 +209,7 @@
 				//
 				this.isom.restart();
 			}
-		}		
+//		}		
 		
 		Springy.requestAnimationFrame(function step() {
 			// we dont tick it any more. just wait from webworker data

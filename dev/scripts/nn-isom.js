@@ -283,6 +283,8 @@ Layout.ISOM.prototype.updatesNodesByGraphDistance = function(w, i, adapation,
 		}
 		/* check if its far from w by most distance */
 		if (d > distance) {
+			var update = point.p.add(i).multiply(Math.pow(2, -1 * repulse));
+//			point.p = point.p.add(update);
 			return;
 		}
 
