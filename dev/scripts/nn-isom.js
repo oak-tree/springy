@@ -21,8 +21,12 @@ self.addEventListener('message', function(event) {
 		layout.start();
 		break;
 	case "restart":
-		if (!layout._started) {
+		if ((!layout._started) && (layout.isFirstRun())) {
 			layout.start()
+		} else {
+			console.log('soft restart');
+			layout.softRestart();
+			//TODO soft start
 		}
 		break;
 	case "stop":
@@ -47,7 +51,7 @@ var Layout = Springy.Layout = {};
 
 Layout.ISOM = function(graph, options, nodePoints, boudingBox) {
 	this.graph = graph;
-
+	this.runs = 0;
 	this.graph = graph;
 	this.options = options;
 	this.epoch = options.epoch;
@@ -65,6 +69,33 @@ Layout.ISOM = function(graph, options, nodePoints, boudingBox) {
 	 */
 	this.floydWarshall();
 };
+
+
+Layout.ISOM.prototype.softRestart = function(options) {
+	var options = options || this.options;
+	this.epoch = options.epoch;
+	this.coolingFactor = options.coolingFactor;
+	this.minAdaption = options.minAdaption;
+	this.maxAdaption = options.maxAdaption;
+	this.interval = options.interval;
+	this.minRadius = options.minRadius;
+	this.maxRadius = options.maxRadius;// stop
+	this.start();
+	
+}
+
+Layout.ISOM.prototype.getRuns = function() {
+	return this.runs;
+}
+
+Layout.ISOM.prototype.isFirstRun = function() {
+	return this.runs === 1;
+}
+
+Layout.ISOM.prototype.anotherRun = function() {
+	this.runs++;
+	return this.runs;
+}
 
 /**
  * get a union distribute random points for all nodes
@@ -287,6 +318,8 @@ Layout.ISOM.prototype.start = function() {
 
 	if (this._started)
 		return;
+	
+	this.anotherRun();
 	this._started = true;
 	this._stop = false;
 	var DEFAULT_STEP = 0;
@@ -302,7 +335,6 @@ Layout.ISOM.prototype.start = function() {
 			postMessage({
 				type : "update",
 				calculated : {
-					edgeSprings : t.edgeSprings,
 					nodePoints : t.nodePoints,
 					boundingBox : t.boundingBox
 				}

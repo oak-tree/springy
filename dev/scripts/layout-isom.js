@@ -3,7 +3,7 @@
 	var Layout = Springy.Layout = (Springy.Layout  || {} );
 	var RADIUS_MAX_INT =1
 	Layout.ISOM = function(graph, options)	 {
-		
+		this.runs = 0;
 		this.graph = graph;
 		this.options = options;
 		this.epoch = options.epoch;
@@ -18,6 +18,19 @@
 		this.resetBoundingBox();
 	};
 
+	Layout.ISOM.prototype.getRuns = function() {
+		return this.runs;
+	}
+	
+	Layout.ISOM.prototype.isFirstRun = function() {
+		return this.runs === 1;
+	}
+	
+	Layout.ISOM.prototype.anotherRun = function() {
+		this.runs++;
+		return this.runs;
+	}
+	
 	/**
 	 * return a string with all layout options
 	 */
@@ -110,6 +123,9 @@
 		// TODO remove this event listener when done
 	}
 	Layout.ISOM.WebWorker.prototype.start = function() {
+		
+		
+		//TODO . check if this is soft start or not
 		this.worker.postMessage({
 			type : "start",
 			layout : JSON.stringify(this.layoutData)
@@ -162,6 +178,9 @@
 			onRenderStart) {
 		var t = this;
 
+
+		this.anotherRun();
+		
 		if (this._started)
 			return;
 		this._started = true;
@@ -176,15 +195,20 @@
 					this.isom = new Layout.ISOM.WebWorker(this, this.graph,this.options)
 		}
 		
-		// check if worker is runner
-		if (!this.isom.started){
-			// no, so start it
-			this.isom.start();
-		} else {
-			//
-			this.isom.restart();
-		}
 		
+		if (this.isFirstRun()) {
+			//
+		
+		
+		// check if worker is runner
+			if ((!this.isom.started) && this.isFirstRun()){
+				// no, so start it
+				this.isom.start();
+			} else {
+				//
+				this.isom.restart();
+			}
+		}		
 		
 		Springy.requestAnimationFrame(function step() {
 			// we dont tick it any more. just wait from webworker data
