@@ -37,7 +37,7 @@ TODO -
 
 Code
 -----
-Currently in isom branch untill i will clean it a bit
+Currently in `isom branch` untill i will clean it a bit
 
 Demo
 ----
