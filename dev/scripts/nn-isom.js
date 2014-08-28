@@ -25,7 +25,8 @@ self.addEventListener('message', function(event) {
 			layout.start()
 		} else {
 			console.log('soft restart');
-			layout.softRestart();
+//			layout.softRestart();
+			layout.start(layout.epoch)
 			//TODO soft start
 		}
 		break;
@@ -313,7 +314,7 @@ Layout.ISOM.prototype.stop = function() {
  * Start simulation if it's not running already. In case it's running then the
  * call is ignored, and none of the callbacks passed is ever executed.
  */
-Layout.ISOM.prototype.start = function() {
+Layout.ISOM.prototype.start = function(timestep) {
 	var t = this;
 
 	if (this._started)
@@ -323,7 +324,7 @@ Layout.ISOM.prototype.start = function() {
 	this._started = true;
 	this._stop = false;
 	var DEFAULT_STEP = 0;
-	var timestep = 0;
+	var timestep = timestep || 0;
 	var r = this.maxRadius;
 
 	// while (!t._stop && (timestep < t.epoch)) {
