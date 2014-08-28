@@ -43,15 +43,11 @@ Demo
 ----
 
 can be found [here](http://oak-tree.github.io/springy/)
+
 [basic](http://oak-tree.github.io/springy/dev/demo.html)
-[medium](http://oak-tree.github.io/springy/dev/mediumdemo.html)
-[huge](http://oak-tree.github.io/springy/dev/bigdemo.html)
+| [medium](http://oak-tree.github.io/springy/dev/mediumdemo.html)
+| [huge](http://oak-tree.github.io/springy/dev/bigdemo.html)
 
-
-
-
-| [simplified API](http://dhotson.github.com/springy/demo-simple.html)
-| [JSON API](http://dhotson.github.com/springy/demo-json.html)
 
 
 Getting Started
@@ -79,7 +75,7 @@ Springy 1.1+ supports simplified API for adding nodes and edges, see
     graph.addNodes('mark', 'higgs', 'other', 'etc');
     graph.addEdges(
         ['mark', 'higgs'],
-        ['mark', 'etc'],
+        ['mark', 'etc'], 
         ['mark', 'other']
     );
 
