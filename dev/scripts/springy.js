@@ -671,7 +671,7 @@ var Graph = Springy.Graph = function() {
 		this.maxAdaption = options.maxAdaption;
 		this.interval = options.interval;
 		this.minRadius = options.minRadius;
-		this.maxRadius = options.maxRadius || RADIUS_MAX_INT;
+		this.maxRadius = options.maxRadius;
 		
 		this.nodePoints = {}; // keep track of points associated with nodes
 		this.resetBoundingBox();
