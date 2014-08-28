@@ -42,6 +42,9 @@ Currently in `isom branch` untill i will clean it a bit
 Demo
 ----
 
+[medium demo of isom vs force direct](../isom/dev/player/mediumdemo.html)
+
+
 [basic](http://dhotson.github.com/springy/demo.html)
 | [simplified API](http://dhotson.github.com/springy/demo-simple.html)
 | [JSON API](http://dhotson.github.com/springy/demo-json.html)
