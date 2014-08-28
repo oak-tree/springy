@@ -1,6 +1,6 @@
 Springy++
 ====
-Basic Graph drawing library.Based on [https://github.com/dhotson/springy] (Springy)
+Basic Graph layouts library in JS. An extension of [Springy] (https://github.com/dhotson/springy)
 
 What is this?
 ----
