@@ -2034,17 +2034,36 @@ var dennis = graph.newNode({
 	graph.newEdge(person0999, person0998, {color: '#70A010'});
 
 
-
-jQuery(function(){
-  var springy = window.springy = jQuery('#springydemo').springy({
-    graph: graph,
-    nodeSelected: function(node){
-      console.log('Node selected: ' + JSON.stringify(node.data));
-    }
-  });
-});
-</script>
-
-<canvas id="springydemo" width="2000" height="2000" />
-</body>
-</html>
+	jQuery(function(){
+	  var springy = window.springy = jQuery('#springydemoisom').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+	    epoch:5000,
+		coolingFactor: 0.4,
+		minAdaption:0.3,
+		maxAdaption:0.8,
+		interval:2,
+		minRadius:0,
+		maxRadius:50,
+		layout:'isom',
+	    
+	  });
+	});
+	jQuery(function(){
+		  var springy = window.springy2 = jQuery('#springydemoforcedirect').springy({
+		    graph: graph,
+		    nodeSelected: function(node){
+		      console.log('Node selected: ' + JSON.stringify(node.data));
+		    },
+			layout:'force',
+		  });
+		});
+	</script>
+	<h1>Isom layout</h1>
+	<canvas id="springydemoisom" width="5000" height="5000" ></canvas>
+	<h1>Force Directed layout</h1>
+	<canvas id="springydemoforcedirect" width="5000" height="5000"></canvas>
+	</body>
+	</html>

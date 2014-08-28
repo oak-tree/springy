@@ -9,6 +9,16 @@ Vector.random = function() {
 			10.0 * (Math.random() - 0.5));
 };
 
+Vector.randomOnCircle = function(radius) {
+	
+	var angle = Math.random()*Math.PI*2;
+	var x = Math.cos(angle)*radius;
+	var y = Math.sin(angle)*radius;
+	return new Vector(x,y)
+};
+
+
+
 Vector.SubTract = function(v1,v2) {
 	return new Vector(v1.x - v2.x, v1.y - v2.y);
 }

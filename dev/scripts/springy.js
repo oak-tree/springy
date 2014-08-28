@@ -50,6 +50,16 @@ Vector.random = function() {
 			10.0 * (Math.random() - 0.5));
 };
 
+Vector.randomOnCircle = function(radius) {
+	
+	var angle = Math.random()*Math.PI*2;
+	var x = Math.cos(angle)*radius;
+	var y = Math.sin(angle)*radius;
+	return new Vector(x,y)
+};
+
+
+
 Vector.SubTract = function(v1,v2) {
 	return new Vector(v1.x - v2.x, v1.y - v2.y);
 }
@@ -397,6 +407,13 @@ var Graph = Springy.Graph = function() {
 		this.resetBoundingBox();
 	};
 
+	/**
+	 * return a string with all layout options
+	 */
+	Layout.ForceDirected.prototype.toString = function() {
+		return "forceDirected. stiffness: {0} repulsion: {1} damping: {2} minEnergyThreshold: {3}".format(
+				this.stiffness ,this.repulsion ,this.damping, this.minEnergyThreshold);
+	}
 
 
 	//getter for point of node 
@@ -641,6 +658,7 @@ var Graph = Springy.Graph = function() {
 	};
 
 // -----------
+
 	var Layout = Springy.Layout = (Springy.Layout  || {} );
 	var RADIUS_MAX_INT =1
 	Layout.ISOM = function(graph, options)	 {
@@ -659,9 +677,15 @@ var Graph = Springy.Graph = function() {
 		this.resetBoundingBox();
 	};
 
-
-
-	//getter for point of node 
+	/**
+	 * return a string with all layout options
+	 */
+	Layout.ISOM.prototype.toString = function() {
+		return "ISOM .epoch: {0} collingFactor: {1} minAdaption: {2} maxAdaption: {3} interval: {4} minRadius: {5} maxRadius: {6}".format(
+				this.epoch, this.coolingFactor, this.minAdaption ,this.maxAdaption,
+				this.interval,	this.minRadius ,this.maxRadius);
+	}
+	// getter for point of node
 	Layout.ISOM.prototype.point = function(node) {
 		if (!(node.id in this.nodePoints)) {
 			return null;
@@ -806,14 +830,14 @@ var Graph = Springy.Graph = function() {
 			onRenderStart();
 		}
 		
-		//check if worker has been loaded
+		// check if worker has been loaded
 		if (!this.isom) {
 					this.isom = new Layout.ISOM.WebWorker(this, this.graph,this.options)
 		}
 		
-		//check if worker is runner
+		// check if worker is runner
 		if (!this.isom.started){
-			//no, so start it
+			// no, so start it
 			this.isom.start();
 		} else {
 			//
@@ -848,7 +872,7 @@ var Graph = Springy.Graph = function() {
 	}
 
 	
-	//TODO maybe should move to math ?
+	// TODO maybe should move to math ?
 	// Find the nearest point to a particular position
 	Layout.ISOM.prototype.nearest = function(pos) {
 		var min = {
@@ -877,7 +901,7 @@ var Graph = Springy.Graph = function() {
 	};
 
 	
-	//reset the boundingBox 
+	// reset the boundingBox
 	Layout.ISOM.prototype.resetBoundingBox = function() {
 		this.boundingBox = {bottomleft: new Vector(-5.156235597282648,-3.573275251640007),
 							topright :new Vector(4.924756703153252, 5.192410807451234)
@@ -986,4 +1010,12 @@ var Graph = Springy.Graph = function() {
 		return true;
 	};
 
+	String.prototype.format = function() {
+	    var formatted = this;
+	    for (var i = 0; i < arguments.length; i++) {
+	        var regexp = new RegExp('\\{'+i+'\\}', 'gi');
+	        formatted = formatted.replace(regexp, arguments[i]);
+	    }
+	    return formatted;
+	};
 }).call(this);

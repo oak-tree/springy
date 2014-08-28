@@ -32,16 +32,35 @@ graph.newEdge(dennis, bianca, {color: '#CC333F'});
 graph.newEdge(bianca, monty, {color: '#EB6841'});
 
 jQuery(function(){
-  var springy = window.springy = jQuery('#springydemo').springy({
+  var springy = window.springy = jQuery('#springydemoisom').springy({
     graph: graph,
     nodeSelected: function(node){
       console.log('Node selected: ' + JSON.stringify(node.data));
     },
-    epoch:200,
+    epoch:50,
+	coolingFactor: 0.4,
+	minAdaption:0.3,
+	maxAdaption:0.8,
+	interval:2,
+	minRadius:0,
+	maxRadius:5,
+	layout:'isom',
+    
   });
 });
+jQuery(function(){
+	  var springy = window.springy2 = jQuery('#springydemoforcedirect').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+		layout:'force',
+	  });
+	});
 </script>
-
-<canvas id="springydemo" width="1000" height="800" />
+<h1>Isom layout</h1>
+<canvas id="springydemoisom" width="1000" height="500" ></canvas>
+<h1>Force Directed layout</h1>
+<canvas id="springydemoforcedirect" width="1000" height="500"></canvas>
 </body>
 </html>

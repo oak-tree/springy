@@ -1,4 +1,5 @@
 // -----------
+
 	var Layout = Springy.Layout = (Springy.Layout  || {} );
 	var RADIUS_MAX_INT =1
 	Layout.ISOM = function(graph, options)	 {
@@ -17,9 +18,15 @@
 		this.resetBoundingBox();
 	};
 
-
-
-	//getter for point of node 
+	/**
+	 * return a string with all layout options
+	 */
+	Layout.ISOM.prototype.toString = function() {
+		return "ISOM .epoch: {0} collingFactor: {1} minAdaption: {2} maxAdaption: {3} interval: {4} minRadius: {5} maxRadius: {6}".format(
+				this.epoch, this.coolingFactor, this.minAdaption ,this.maxAdaption,
+				this.interval,	this.minRadius ,this.maxRadius);
+	}
+	// getter for point of node
 	Layout.ISOM.prototype.point = function(node) {
 		if (!(node.id in this.nodePoints)) {
 			return null;
@@ -164,14 +171,14 @@
 			onRenderStart();
 		}
 		
-		//check if worker has been loaded
+		// check if worker has been loaded
 		if (!this.isom) {
 					this.isom = new Layout.ISOM.WebWorker(this, this.graph,this.options)
 		}
 		
-		//check if worker is runner
+		// check if worker is runner
 		if (!this.isom.started){
-			//no, so start it
+			// no, so start it
 			this.isom.start();
 		} else {
 			//
@@ -206,7 +213,7 @@
 	}
 
 	
-	//TODO maybe should move to math ?
+	// TODO maybe should move to math ?
 	// Find the nearest point to a particular position
 	Layout.ISOM.prototype.nearest = function(pos) {
 		var min = {
@@ -235,7 +242,7 @@
 	};
 
 	
-	//reset the boundingBox 
+	// reset the boundingBox
 	Layout.ISOM.prototype.resetBoundingBox = function() {
 		this.boundingBox = {bottomleft: new Vector(-5.156235597282648,-3.573275251640007),
 							topright :new Vector(4.924756703153252, 5.192410807451234)

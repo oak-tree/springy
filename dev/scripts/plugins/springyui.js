@@ -37,20 +37,30 @@
 		var canvas = this[0];
 		var ctx = canvas.getContext("2d");
 
-		/* use for force direct * 
-//		var layout = this.layout = new Springy.Layout.ForceDirected(graph,
-//				stiffness, repulsion, damping, minEnergyThreshold);
-		/*use for isom */
-		var layout = this.layout = new Springy.Layout.ISOM(graph,{
-			epoch:params.epoch || 4000,
-			coolingFactor: params.coolingFactor ||0.1,//default 0.4
-			minAdaption:params.minAdaption ||0.15,
-			maxAdaption:params.maxAdaption || 0.8,
-			interval:params.interval ||3,
-			minRadius:params.minRadius ||0,
-			maxRadius:params.maxRadius || 10
-		})
-//				stiffness, repulsion, damping, minEnergyThreshold);
+		var layout = null;
+		params.layout = params.layout || "force"; /* set default to be force direct*/
+		switch (params.layout) { 
+		
+		case "force":
+			/* use for force direct */ 
+			var layout = this.layout = new Springy.Layout.ForceDirected(graph,
+					stiffness, repulsion, damping, minEnergyThreshold);
+			/*use for isom */
+				break;
+		case "isom":
+			var layout = this.layout = new Springy.Layout.ISOM(graph,{
+				epoch:params.epoch || 4000,
+				coolingFactor: params.coolingFactor ||0.1,//default 0.4
+				minAdaption:params.minAdaption ||0.15,
+				maxAdaption:params.maxAdaption || 0.8,
+				interval:params.interval ||3,
+				minRadius:params.minRadius ||0,
+				maxRadius:params.maxRadius || 10
+			})
+				break;
+		}
+			
+		
 		
 
 		// calculate bounding box of graph layout.. with ease-in
@@ -237,6 +247,11 @@
 				layout,
 				function clear() {
 					ctx.clearRect(0, 0, canvas.width, canvas.height);
+					ctx.fillStyle = "blue";
+					ctx.font = "bold 16px Arial";
+					ctx.fillText("layout options : " +  layout.toString(), 10, 16);
+					/* write layout options */
+					
 				},
 				function drawEdge(edge, p1, p2) {
 					var x1 = toScreen(p1).x;

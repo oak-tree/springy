@@ -17,6 +17,13 @@
 		this.resetBoundingBox();
 	};
 
+	/**
+	 * return a string with all layout options
+	 */
+	Layout.ForceDirected.prototype.toString = function() {
+		return "forceDirected. stiffness: {0} repulsion: {1} damping: {2} minEnergyThreshold: {3}".format(
+				this.stiffness ,this.repulsion ,this.damping, this.minEnergyThreshold);
+	}
 
 
 	//getter for point of node 
