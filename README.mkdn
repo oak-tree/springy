@@ -44,9 +44,9 @@ Demo
 
 can be found [here](http://oak-tree.github.io/springy/)
 
-[basic](http://oak-tree.github.io/springy/dev/demo.html)
-| [medium](http://oak-tree.github.io/springy/dev/mediumdemo.html)
-| [huge](http://oak-tree.github.io/springy/dev/bigdemo.html)
+[basic](http://oak-tree.github.io/springy/dev/player/demo.html)
+| [medium](http://oak-tree.github.io/springy/dev/player/mediumdemo.html)
+| [huge](http://oak-tree.github.io/springy/dev/player/bigdemo.html)
 
 
 
