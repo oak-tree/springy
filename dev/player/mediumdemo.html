@@ -1,0 +1,158 @@
+<html>
+<body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script src="../scripts/springy.js"></script>
+<script src="../scripts/plugins/springyui.js"></script>
+<script>
+var graph = new Springy.Graph();
+
+var dennis = graph.newNode({
+  label: 'Dennis',
+  ondoubleclick: function() { console.log("Hello!"); }
+});
+var michael = graph.newNode({label: 'Michael'});
+var jessica = graph.newNode({label: 'Jessica'});
+var timothy = graph.newNode({label: 'Timothy'});
+var barbara = graph.newNode({label: 'Barbara'});
+var franklin = graph.newNode({label: 'Franklin'});
+var monty = graph.newNode({label: 'Monty'});
+var james = graph.newNode({label: 'James'});
+var bianca = graph.newNode({label: 'Bianca'});
+var person01 = graph.newNode({label: 'person01'});
+var person02 = graph.newNode({label: 'person02'});
+var person03 = graph.newNode({label: 'person03'});
+var person04 = graph.newNode({label: 'person04'});
+var person05 = graph.newNode({label: 'person05'});
+var person06 = graph.newNode({label: 'person06'});
+var person07 = graph.newNode({label: 'person07'});
+var person08 = graph.newNode({label: 'person08'});
+var person09 = graph.newNode({label: 'person09'});
+var person010 = graph.newNode({label: 'person010'});
+var person011 = graph.newNode({label: 'person011'});
+var person012 = graph.newNode({label: 'person012'});
+var person013 = graph.newNode({label: 'person013'});
+var person014 = graph.newNode({label: 'person014'});
+var person015 = graph.newNode({label: 'person015'});
+var person016 = graph.newNode({label: 'person016'});
+var person017 = graph.newNode({label: 'person017'});
+var person018 = graph.newNode({label: 'person018'});
+var person019 = graph.newNode({label: 'person019'});
+var person020 = graph.newNode({label: 'person020'});
+var person021 = graph.newNode({label: 'person021'});
+var person022 = graph.newNode({label: 'person022'});
+var person023 = graph.newNode({label: 'person023'});
+var person024 = graph.newNode({label: 'person024'});
+var person025 = graph.newNode({label: 'person025'});
+var person026 = graph.newNode({label: 'person026'});
+var person027 = graph.newNode({label: 'person027'});
+var person028 = graph.newNode({label: 'person028'});
+var person029 = graph.newNode({label: 'person029'});
+var person030 = graph.newNode({label: 'person030'});
+var person031 = graph.newNode({label: 'person031'});
+var person032 = graph.newNode({label: 'person032'});
+var person033 = graph.newNode({label: 'person033'});
+
+graph.newEdge(dennis, michael, {color: '#00A0B0'});
+graph.newEdge(michael, dennis, {color: '#6A4A3C'});
+graph.newEdge(michael, jessica, {color: '#CC333F'});
+graph.newEdge(jessica, barbara, {color: '#EB6841'});
+graph.newEdge(michael, timothy, {color: '#EDC951'});
+graph.newEdge(franklin, monty, {color: '#7DBE3C'});
+graph.newEdge(dennis, monty, {color: '#000000'});
+graph.newEdge(monty, james, {color: '#00A0B0'});
+graph.newEdge(barbara, timothy, {color: '#6A4A3C'});
+graph.newEdge(dennis, bianca, {color: '#CC333F'});
+graph.newEdge(bianca, monty, {color: '#EB6841'});
+
+
+var dennis1 = graph.newNode({
+	  label: 'Dennis',
+	  ondoubleclick: function() { console.log("Hello!"); }
+	});
+var michael1 = graph.newNode({label: 'Michael'});
+var jessica1 = graph.newNode({label: 'Jessica'});
+var timothy1 = graph.newNode({label: 'Timothy'});
+var barbara1 = graph.newNode({label: 'Barbara'});
+var franklin1 = graph.newNode({label: 'Franklin'});
+var monty1 = graph.newNode({label: 'Monty'});
+var james1 = graph.newNode({label: 'James'});
+var bianca1 = graph.newNode({label: 'Bianca'});
+
+graph.newEdge(michael1, jessica1, {color: '#CC333F'});
+graph.newEdge(jessica1, barbara1, {color: '#EB6841'});
+graph.newEdge(michael1, timothy1, {color: '#EDC951'});
+graph.newEdge(franklin1, monty1, {color: '#7DBE3C'});
+graph.newEdge(dennis1, monty1, {color: '#000000'});
+graph.newEdge(monty1, james1, {color: '#00A0B0'});
+graph.newEdge(barbara1, timothy1, {color: '#6A4A3C'});
+graph.newEdge(bianca1, monty1, {color: '#EB6841'});
+
+
+
+
+graph.newEdge(person02, person01, {color: '#00A0B0'});
+graph.newEdge(person03, person02, {color: '#10A020'});
+graph.newEdge(person04, person03, {color: '#70A070'});
+graph.newEdge(person05, person04, {color: '#70A030'});
+graph.newEdge(person06, person05, {color: '#20A090'});
+graph.newEdge(person07, person06, {color: '#90A060'});
+graph.newEdge(person08, person07, {color: '#10A040'});
+graph.newEdge(person09, person08, {color: '#00A020'});
+graph.newEdge(person010, person09, {color: '#30A080'});
+graph.newEdge(person011, person010, {color: '#70A000'});
+graph.newEdge(person012, person011, {color: '#90A040'});
+graph.newEdge(person013, person012, {color: '#60A080'});
+graph.newEdge(person014, person013, {color: '#90A000'});
+graph.newEdge(person015, person014, {color: '#70A030'});
+graph.newEdge(person016, person015, {color: '#60A060'});
+graph.newEdge(person017, person016, {color: '#50A030'});
+graph.newEdge(person018, person017, {color: '#90A090'});
+graph.newEdge(person019, person018, {color: '#90A090'});
+graph.newEdge(person020, person019, {color: '#80A040'});
+graph.newEdge(person021, person020, {color: '#20A040'});
+graph.newEdge(person022, person021, {color: '#10A030'});
+graph.newEdge(person023, person022, {color: '#00A090'});
+graph.newEdge(person024, person023, {color: '#30A080'});
+graph.newEdge(person025, person024, {color: '#30A080'});
+graph.newEdge(person026, person025, {color: '#90A000'});
+graph.newEdge(person027, person026, {color: '#30A070'});
+graph.newEdge(person028, person027, {color: '#50A020'});
+graph.newEdge(person029, person028, {color: '#50A080'});
+graph.newEdge(person030, person029, {color: '#90A010'});
+graph.newEdge(person031, person030, {color: '#30A030'});
+graph.newEdge(person032, person031, {color: '#50A070'});
+graph.newEdge(person033, person032, {color: '#90A050'});
+
+jQuery(function(){
+  var springy = window.springy = jQuery('#springydemoisom').springy({
+    graph: graph,
+    nodeSelected: function(node){
+      console.log('Node selected: ' + JSON.stringify(node.data));
+    },
+    epoch:500,
+	coolingFactor: 0.1,
+	minAdaption:0.3,
+	maxAdaption:0.8,
+	interval:3,
+	minRadius:0,
+	maxRadius:6,
+	layout:'isom',
+    
+  });
+});
+jQuery(function(){
+	  var springy = window.springy2 = jQuery('#springydemoforcedirect').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+		layout:'force',
+	  });
+	});
+</script>
+<h1>Isom layout</h1>
+<canvas id="springydemoisom" width="1000" height="1000" ></canvas>
+<h1>Force Directed layout</h1>
+<canvas id="springydemoforcedirect" width="1000" height="1000"></canvas>
+</body>
+</html>
