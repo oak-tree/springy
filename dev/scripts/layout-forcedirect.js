@@ -8,6 +8,7 @@
 		this.repulsion = repulsion; // repulsion constant
 		this.damping = damping; // velocity damping factor
 		this.minEnergyThreshold = minEnergyThreshold || 0.01; // threshold
+		this.iteration = 0;
 		// used to
 		// determine
 		// render stop
@@ -21,8 +22,8 @@
 	 * return a string with all layout options
 	 */
 	Layout.ForceDirected.prototype.toString = function() {
-		return "forceDirected. stiffness: {0} repulsion: {1} damping: {2} minEnergyThreshold: {3}".format(
-				this.stiffness ,this.repulsion ,this.damping, this.minEnergyThreshold);
+		return "forceDirected. stiffness: {0} repulsion: {1} damping: {2} minEnergyThreshold: {3} iteration: {4}".format(
+				this.stiffness ,this.repulsion ,this.damping, this.minEnergyThreshold, this.iteration);
 	}
 
 
@@ -79,6 +80,7 @@
 		this.edgeSprings = calculated.edgeSprings;
 		this.nodePoints = calculated.nodePoints;
 		this.boundingBox = calculated.boundingBox;
+		this.iteration++;
 	}
 
 	var WebWorker = Layout.ForceDirected.WebWorker = {};

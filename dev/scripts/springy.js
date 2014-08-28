@@ -398,6 +398,7 @@ var Graph = Springy.Graph = function() {
 		this.repulsion = repulsion; // repulsion constant
 		this.damping = damping; // velocity damping factor
 		this.minEnergyThreshold = minEnergyThreshold || 0.01; // threshold
+		this.iteration = 0;
 		// used to
 		// determine
 		// render stop
@@ -411,8 +412,8 @@ var Graph = Springy.Graph = function() {
 	 * return a string with all layout options
 	 */
 	Layout.ForceDirected.prototype.toString = function() {
-		return "forceDirected. stiffness: {0} repulsion: {1} damping: {2} minEnergyThreshold: {3}".format(
-				this.stiffness ,this.repulsion ,this.damping, this.minEnergyThreshold);
+		return "forceDirected. stiffness: {0} repulsion: {1} damping: {2} minEnergyThreshold: {3} iteration: {4}".format(
+				this.stiffness ,this.repulsion ,this.damping, this.minEnergyThreshold, this.iteration);
 	}
 
 
@@ -469,6 +470,7 @@ var Graph = Springy.Graph = function() {
 		this.edgeSprings = calculated.edgeSprings;
 		this.nodePoints = calculated.nodePoints;
 		this.boundingBox = calculated.boundingBox;
+		this.iteration++;
 	}
 
 	var WebWorker = Layout.ForceDirected.WebWorker = {};
@@ -662,28 +664,41 @@ var Graph = Springy.Graph = function() {
 	var Layout = Springy.Layout = (Springy.Layout  || {} );
 	var RADIUS_MAX_INT =1
 	Layout.ISOM = function(graph, options)	 {
-		
+		this.runs = 0;
 		this.graph = graph;
 		this.options = options;
 		this.epoch = options.epoch;
-		this.coolingFactor  = options.collingFactor;
+		this.coolingFactor  = options.coolingFactor;
 		this.minAdaption = options.minAdaption;
 		this.maxAdaption = options.maxAdaption;
 		this.interval = options.interval;
 		this.minRadius = options.minRadius;
 		this.maxRadius = options.maxRadius;
-		
+		this.iteration = 0;
 		this.nodePoints = {}; // keep track of points associated with nodes
 		this.resetBoundingBox();
 	};
 
+	Layout.ISOM.prototype.getRuns = function() {
+		return this.runs;
+	}
+	
+	Layout.ISOM.prototype.isFirstRun = function() {
+		return this.runs === 1;
+	}
+	
+	Layout.ISOM.prototype.anotherRun = function() {
+		this.runs++;
+		return this.runs;
+	}
+	
 	/**
 	 * return a string with all layout options
 	 */
 	Layout.ISOM.prototype.toString = function() {
-		return "ISOM .epoch: {0} collingFactor: {1} minAdaption: {2} maxAdaption: {3} interval: {4} minRadius: {5} maxRadius: {6}".format(
+		return "ISOM .epoch: {0} collingFactor: {1} minAdaption: {2} maxAdaption: {3} interval: {4} minRadius: {5} maxRadius: {6} iteration: {7}".format(
 				this.epoch, this.coolingFactor, this.minAdaption ,this.maxAdaption,
-				this.interval,	this.minRadius ,this.maxRadius);
+				this.interval,	this.minRadius ,this.maxRadius,this.iteration);
 	}
 	// getter for point of node
 	Layout.ISOM.prototype.point = function(node) {
@@ -731,6 +746,7 @@ var Graph = Springy.Graph = function() {
 		this.edgeSprings = calculated.edgeSprings;
 		this.nodePoints = calculated.nodePoints;
 		this.boundingBox = calculated.boundingBox;
+		this.iteration++;
 	}
 
 	var WebWorker = Layout.ISOM.WebWorker = {};
@@ -769,6 +785,9 @@ var Graph = Springy.Graph = function() {
 		// TODO remove this event listener when done
 	}
 	Layout.ISOM.WebWorker.prototype.start = function() {
+		
+		
+		//TODO . check if this is soft start or not
 		this.worker.postMessage({
 			type : "start",
 			layout : JSON.stringify(this.layoutData)
@@ -821,6 +840,9 @@ var Graph = Springy.Graph = function() {
 			onRenderStart) {
 		var t = this;
 
+
+		this.anotherRun();
+		
 		if (this._started)
 			return;
 		this._started = true;
@@ -835,15 +857,20 @@ var Graph = Springy.Graph = function() {
 					this.isom = new Layout.ISOM.WebWorker(this, this.graph,this.options)
 		}
 		
-		// check if worker is runner
-		if (!this.isom.started){
-			// no, so start it
-			this.isom.start();
-		} else {
-			//
-			this.isom.restart();
-		}
 		
+//		if (this.isFirstRun()) {
+			//
+		
+		
+		// check if worker is runner
+			if ((!this.isom.started) && this.isFirstRun()){
+				// no, so start it
+				this.isom.start();
+			} else {
+				//
+				this.isom.restart();
+			}
+//		}		
 		
 		Springy.requestAnimationFrame(function step() {
 			// we dont tick it any more. just wait from webworker data
