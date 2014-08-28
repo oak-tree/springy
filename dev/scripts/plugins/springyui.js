@@ -41,6 +41,7 @@
 		params.layout = params.layout || "force"; /* set default to be force direct*/
 		switch (params.layout) { 
 		
+		//TODO maybe allow user to inject layout inside 
 		case "force":
 			/* use for force direct */ 
 			var layout = this.layout = new Springy.Layout.ForceDirected(graph,
