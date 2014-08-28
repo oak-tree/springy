@@ -38,14 +38,18 @@ TODO -
 Code
 -----
 Currently in `isom branch` untill i will clean it a bit
-
+[medium demo of isom vs force direct](../isom/dev/player/mediumdemo.html)
 Demo
 ----
 
-[medium demo of isom vs force direct](../isom/dev/player/mediumdemo.html)
+can be found [here](http://oak-tree.github.io/springy/)
+[basic](http://oak-tree.github.io/springy/dev/demo.html)
+[medium](http://oak-tree.github.io/springy/dev/mediumdemo.html)
+[huge](http://oak-tree.github.io/springy/dev/bigdemo.html)
 
 
-[basic](http://dhotson.github.com/springy/demo.html)
+
+
 | [simplified API](http://dhotson.github.com/springy/demo-simple.html)
 | [JSON API](http://dhotson.github.com/springy/demo-json.html)
 
