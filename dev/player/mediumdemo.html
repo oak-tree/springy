@@ -1,6 +1,7 @@
 <html>
 <body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script src="../bower_components/jquery/dist/jquery.js"></script>
 <script src="../scripts/springy.js"></script>
 <script src="../scripts/plugins/springyui.js"></script>
 <script>
@@ -122,24 +123,89 @@ graph.newEdge(person030, person029, {color: '#90A010'});
 graph.newEdge(person031, person030, {color: '#30A030'});
 graph.newEdge(person032, person031, {color: '#50A070'});
 graph.newEdge(person033, person032, {color: '#90A050'});
+graph.newEdge(person033, person01, {color: '#90A050'});
+graph.newEdge(person01, person03, {color: '#90A050'});
+// graph.newEdge(person018, person01, {color: '#90A050'});
+
 
 jQuery(function(){
-  var springy = window.springy = jQuery('#springydemoisom').springy({
+	  var springy = window.springy = jQuery('#springydemoisom').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+	    epoch:700,
+		coolingFactor: 0.8,
+		minAdaption:0.4,
+		maxAdaption:0.6,
+		interval:2,
+		minRadius:1,
+		maxRadius:20,
+		layoutType:"",
+		layoutSize:null,
+		layout:'isom',
+	    
+	  });
+	});
+jQuery(function(){
+  var springy = window.springy = jQuery('#springydemoisom1').springy({
     graph: graph,
     nodeSelected: function(node){
       console.log('Node selected: ' + JSON.stringify(node.data));
     },
-    epoch:550,
-	coolingFactor: 0.1,
-	minAdaption:0.3,
-	maxAdaption:0.8,
-	interval:3,
-	minRadius:0,
-	maxRadius:6,
+    epoch:485,
+	coolingFactor: 0.8,
+	minAdaption:0.4,
+	maxAdaption:0.6,
+	interval:5,
+	minRadius:1,
+	maxRadius:20,
+	layoutType:"insquare",
+	layoutSize:15,
 	layout:'isom',
     
   });
 });
+
+	
+jQuery(function(){
+	  var springy = window.springy = jQuery('#springydemoisom2').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+	    epoch:700,
+		coolingFactor: 0.8,
+		minAdaption:0.4,
+		maxAdaption:0.6,
+		interval:2,
+		minRadius:1,
+		maxRadius:20,
+		layoutType:"disc",
+		layoutSize:{minRadius:2,maxRadius:5},
+		layout:'isom',
+	    
+	  });
+	});
+	
+jQuery(function(){
+	  var springy = window.springy = jQuery('#springydemoisom3').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+	    epoch:500,
+		coolingFactor: 0.8,
+		minAdaption:0.3,
+		maxAdaption:0.8,
+		interval:2,
+		minRadius:0,
+		maxRadius:20,
+		layoutType:'circle',
+		layoutSize:3,
+		layout:'isom',
+	  });
+	});
 jQuery(function(){
 	  var springy = window.springy2 = jQuery('#springydemoforcedirect').springy({
 	    graph: graph,
@@ -152,6 +218,12 @@ jQuery(function(){
 </script>
 <h1>Isom layout</h1>
 <canvas id="springydemoisom" width="1250" height="1000" ></canvas>
+<h1>Isom layout 1</h1>
+<canvas id="springydemoisom1" width="1250" height="1000" ></canvas>
+<h1>Isom layout 2 </h1>
+<canvas id="springydemoisom2" width="1250" height="1000" ></canvas>
+<h1>Isom layout 3 </h1>
+<canvas id="springydemoisom3" width="1250" height="1000" ></canvas>
 <h1>Force Directed layout</h1>
 <canvas id="springydemoforcedirect" width="1250" height="1000"></canvas>
 </body>

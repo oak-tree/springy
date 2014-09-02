@@ -64,6 +64,11 @@ Layout.ISOM = function(graph, options, nodePoints, boudingBox) {
 	this.maxRadius = options.maxRadius;// stop
 
 	this.nodePoints = {};
+	
+	var DEFAULT_LAYOUT_STR = "",DEFAULT_LAYOUT_SIZE  = 5;
+	this.layoutType = options.layoutType || DEFAULT_LAYOUT_STR;
+	this.layoutSize = options.layoutSize || DEFAULT_LAYOUT_SIZE;
+	console.log(this.layoutType)
 
 	/*
 	 * calculate distance of each two vertex pairs
@@ -143,6 +148,7 @@ Layout.ISOM.prototype.floydWarshall = function() {
 		n++;
 		var source = nodes[e.source.id], target = nodes[e.target.id];
 		dist.set(source, target, 1);
+		dist.set (target,source, 1);
 	});
 
 	/*
@@ -187,6 +193,7 @@ Layout.ISOM.prototype.point = function(node) {
 		var mass = (node.data.mass !== undefined) ? node.data.mass : 1.0;
 		this.nodePoints[node.id] = new Layout.ISOM.Point(Vector.random(), mass);
 		this.nodePoints[node.id] = new Layout.ISOM.Point(new Vector(0,0), mass);
+		this.nodePoints[node.id] = new Layout.ISOM.Point(this.getNewCoordinate(), mass);
 //		 this.nodePoints[node.id] = new Layout.ISOM.Point(
 //		Vector.randomOnCircle(3), mass);
 
@@ -274,16 +281,19 @@ Layout.ISOM.prototype.updatesNodesByGraphDistance = function(w, i, adapation,
 		/*
 		 * if this node is from different group repulse it
 		 */
+		
 		if (d === Number.POSITIVE_INFINITY) {
-			repulse = 50;
-			var update = point.p.add(i).multiply(Math.pow(2, -1 * repulse));
+			repulse = 500;
+			var update = point.p.subtract(i).multiply(Math.pow(2, -1 * repulse));
 			point.p = point.p.add(update);
 			return;
 
 		}
 		/* check if its far from w by most distance */
 		if (d > distance) {
-			var update = point.p.add(i).multiply(Math.pow(2, -1 * repulse));
+			repulse = 0.2;
+			var update = point.p.subtract(i).multiply(
+					adapation *repulse * Math.pow(2, -1 * d));
 //			point.p = point.p.add(update);
 			return;
 		}
@@ -292,12 +302,39 @@ Layout.ISOM.prototype.updatesNodesByGraphDistance = function(w, i, adapation,
 		var update = point.p.subtract(i).multiply(
 				adapation * Math.pow(2, -1 * d));
 		point.p = point.p.subtract(update);
+	
 	})
 };
-
+Layout.ISOM.prototype.getNewCoordinate =  function() {
+	var i = null;
+	console.log(this.layoutType)
+	switch (this.layoutType) {
+		case "circle":
+			i = Vector.randomOnCircle(this.layoutSize);
+			console.log('point on circle')
+			break;
+		case "onsquare":
+			i = Vector.randomOnSquare(this.layoutSize);
+			break;
+		case "insquare": 
+			i = Vector.randomInSquare(this.layoutSize);
+			break;
+		case "disc":
+			console.log('as');
+					
+			i = Vector.randomOnDisc(this.layoutSize.minRadius,this.layoutSize.maxRadius);
+//			i = Vector.randomOnCircle(this.layoutSize.minRadius);
+			break;
+		default:
+			i = Vector.random();
+	}
+	
+	return i;
+}
+	
 Layout.ISOM.prototype.tick = function(timestep, r) {
 	var adapation = this.updateAdaption(timestep);
-	var i = Vector.random();
+	var i = this.getNewCoordinate();
 //	nodeLocation = Math.floor((Math.random() * (this.graph.nodes.length -1)));
 //	var i =  this.point[this.graph.nodes[nodeLocation]];
 //	 var i = Vector.randomOnCircle(3);
@@ -312,7 +349,7 @@ Layout.ISOM.prototype.stop = function() {
 	this._stop = true;
 }
 
-/**
+ /**
  * Start simulation if it's not running already. In case it's running then the
  * call is ignored, and none of the callbacks passed is ever executed.
  */

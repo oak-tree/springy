@@ -56,7 +56,9 @@
 				maxAdaption:params.maxAdaption || 0.8,
 				interval:params.interval ||3,
 				minRadius:params.minRadius ||0,
-				maxRadius:params.maxRadius || 10
+				maxRadius:params.maxRadius || 10,
+				layoutType:params.layoutType || "",
+				layoutSize:params.layoutSize || 5
 			})
 				break;
 		}
@@ -249,7 +251,7 @@
 				function clear() {
 					ctx.clearRect(0, 0, canvas.width, canvas.height);
 					ctx.fillStyle = "blue";
-					ctx.font = "bold 16px Arial";
+					ctx.font = "bold 12px Arial";
 					ctx.fillText("layout options : " +  layout.toString(), 10, 16);
 					/* write layout options */
 					

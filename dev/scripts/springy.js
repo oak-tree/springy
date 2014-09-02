@@ -50,6 +50,12 @@ Vector.random = function() {
 			10.0 * (Math.random() - 0.5));
 };
 
+
+var random = function(x,y){
+	var seed = Math.random();
+	return y*seed + (1-seed) * x;
+}
+
 Vector.randomOnCircle = function(radius) {
 	
 	var angle = Math.random()*Math.PI*2;
@@ -57,6 +63,33 @@ Vector.randomOnCircle = function(radius) {
 	var y = Math.sin(angle)*radius;
 	return new Vector(x,y)
 };
+
+
+Vector.randomOnDisc = function(minRadius, maxRadius) {
+	
+	var angle = Math.random()*Math.PI*2;
+	var radius = random(minRadius, maxRadius);
+	console.log(radius);
+	var x = Math.cos(angle)*radius;
+	var y = Math.sin(angle)*radius;
+	return new Vector(x,y)
+};
+
+Vector.randomOnSquare = function(size) {
+	
+	
+	var cos = Math.cos(angle);
+	var sin = Math.sin(angle);
+	
+	
+	return new Vector(x,y)
+}
+
+Vector.randomInSquare = function(size) {
+	return new Vector(size * (Math.random() - 0.5),
+			size * (Math.random() - 0.5));
+}
+
 
 
 
@@ -674,6 +707,8 @@ var Graph = Springy.Graph = function() {
 		this.interval = options.interval;
 		this.minRadius = options.minRadius;
 		this.maxRadius = options.maxRadius;
+		this.layoutType = options.layoutType; 
+		this.layoutSize = options.layoutSize;
 		this.iteration = 0;
 		this.nodePoints = {}; // keep track of points associated with nodes
 		this.resetBoundingBox();
@@ -696,7 +731,7 @@ var Graph = Springy.Graph = function() {
 	 * return a string with all layout options
 	 */
 	Layout.ISOM.prototype.toString = function() {
-		return "ISOM .epoch: {0} collingFactor: {1} minAdaption: {2} maxAdaption: {3} interval: {4} minRadius: {5} maxRadius: {6} iteration: {7}".format(
+		return "ISOM  type: {0} size: {1} .epoch: {2} collingFactor: {3} minAdaption: {4} maxAdaption: {5} interval: {6} minRadius: {7} maxRadius: {8} iteration: {9}".format(this.layoutType, this.layoutSize,
 				this.epoch, this.coolingFactor, this.minAdaption ,this.maxAdaption,
 				this.interval,	this.minRadius ,this.maxRadius,this.iteration);
 	}

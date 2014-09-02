@@ -1,6 +1,8 @@
 <html>
 <body>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../bower_components/jquery/dist/jquery.js"></script>
 <script src="../scripts/springy.js"></script>
 <script src="../scripts/plugins/springyui.js"></script>
 <script>
@@ -38,16 +40,73 @@ jQuery(function(){
       console.log('Node selected: ' + JSON.stringify(node.data));
     },
     epoch:50,
-	coolingFactor: 0.4,
+	coolingFactor: 0.8,
 	minAdaption:0.3,
 	maxAdaption:0.8,
 	interval:2,
 	minRadius:0,
 	maxRadius:5,
 	layout:'isom',
-    
   });
 });
+
+jQuery(function(){
+	  var springy = window.springy = jQuery('#springydemoisom1').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+	    epoch:50,
+		coolingFactor: 0.8,
+		minAdaption:0.4,
+		maxAdaption:0.6,
+		interval:2,
+		minRadius:1,
+		maxRadius:20,
+		layoutType:"insquare",
+		layoutSize:15,
+		layout:'isom',
+	    
+	  });
+	});
+
+jQuery(function(){
+	  var springy = window.springy = jQuery('#springydemoisom2').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+	    epoch:50,
+		coolingFactor: 0.8,
+		minAdaption:0.3,
+		maxAdaption:0.8,
+		interval:2,
+		minRadius:0,
+		maxRadius:5,
+		layoutType:'disc',
+		layoutSize:{minRadius:0,maxRadius:5},
+		layout:'isom',
+	  });
+	});
+	
+jQuery(function(){
+	  var springy = window.springy = jQuery('#springydemoisom3').springy({
+	    graph: graph,
+	    nodeSelected: function(node){
+	      console.log('Node selected: ' + JSON.stringify(node.data));
+	    },
+	    epoch:50,
+		coolingFactor: 0.8,
+		minAdaption:0.3,
+		maxAdaption:0.8,
+		interval:2,
+		minRadius:0,
+		maxRadius:2,
+		layoutType:'circle',
+		layoutSize:3,
+		layout:'isom',
+	  });
+	});
 jQuery(function(){
 	  var springy = window.springy2 = jQuery('#springydemoforcedirect').springy({
 	    graph: graph,
@@ -60,6 +119,12 @@ jQuery(function(){
 </script>
 <h1>Isom layout</h1>
 <canvas id="springydemoisom" width="1200" height="500" ></canvas>
+<h1>Isom layout 1</h1>
+<canvas id="springydemoisom1" width="1200" height="500" ></canvas>
+<h1>Isom layout 2</h1>
+<canvas id="springydemoisom2" width="1200" height="500" ></canvas>
+<h1>Isom layout 3</h1>
+<canvas id="springydemoisom3" width="1200" height="500" ></canvas>
 <h1>Force Directed layout</h1>
 <canvas id="springydemoforcedirect" width="1200" height="500"></canvas>
 </body>

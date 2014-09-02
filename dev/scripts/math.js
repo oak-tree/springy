@@ -9,6 +9,12 @@ Vector.random = function() {
 			10.0 * (Math.random() - 0.5));
 };
 
+
+var random = function(x,y){
+	var seed = Math.random();
+	return y*seed + (1-seed) * x;
+}
+
 Vector.randomOnCircle = function(radius) {
 	
 	var angle = Math.random()*Math.PI*2;
@@ -16,6 +22,33 @@ Vector.randomOnCircle = function(radius) {
 	var y = Math.sin(angle)*radius;
 	return new Vector(x,y)
 };
+
+
+Vector.randomOnDisc = function(minRadius, maxRadius) {
+	
+	var angle = Math.random()*Math.PI*2;
+	var radius = random(minRadius, maxRadius);
+	console.log(radius);
+	var x = Math.cos(angle)*radius;
+	var y = Math.sin(angle)*radius;
+	return new Vector(x,y)
+};
+
+Vector.randomOnSquare = function(size) {
+	
+	
+	var cos = Math.cos(angle);
+	var sin = Math.sin(angle);
+	
+	
+	return new Vector(x,y)
+}
+
+Vector.randomInSquare = function(size) {
+	return new Vector(size * (Math.random() - 0.5),
+			size * (Math.random() - 0.5));
+}
+
 
 
 
