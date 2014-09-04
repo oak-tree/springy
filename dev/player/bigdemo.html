@@ -2058,78 +2058,78 @@ var dennis = graph.newNode({
 		    nodeSelected: function(node){
 		      console.log('Node selected: ' + JSON.stringify(node.data));
 		    },
-		    epoch:1500,
+		    epoch:5000,
 			coolingFactor: 0.8,
 			minAdaption:0.4,
 			maxAdaption:0.6,
-			interval:2,
+			interval:1,
 			minRadius:1,
-			maxRadius:20,
+			maxRadius:4,
 			layoutType:"",
 			layoutSize:null,
 			layout:'isom',
 		    
 		  });
 		});
-	jQuery(function(){
-	  var springy = window.springy = jQuery('#springydemoisom1').springy({
-	    graph: graph,
-	    nodeSelected: function(node){
-	      console.log('Node selected: ' + JSON.stringify(node.data));
-	    },
-	    epoch:1500,
-		coolingFactor: 0.8,
-		minAdaption:0.4,
-		maxAdaption:0.6,
-		interval:5,
-		minRadius:1,
-		maxRadius:20,
-		layoutType:"circle",
-		layoutSize:3,
-		layout:'isom',
+// 	jQuery(function(){
+// 	  var springy = window.springy = jQuery('#springydemoisom1').springy({
+// 	    graph: graph,
+// 	    nodeSelected: function(node){
+// 	      console.log('Node selected: ' + JSON.stringify(node.data));
+// 	    },
+// 	    epoch:1500,
+// 		coolingFactor: 0.8,
+// 		minAdaption:0.4,
+// 		maxAdaption:0.6,
+// 		interval:2,
+// 		minRadius:1,
+// 		maxRadius:5,
+// 		layoutType:"circle",
+// 		layoutSize:3,
+// 		layout:'isom',
 	    
-	  });
-	});
+// 	  });
+// 	});
 
 		
-	jQuery(function(){
-		  var springy = window.springy = jQuery('#springydemoisom2').springy({
-		    graph: graph,
-		    nodeSelected: function(node){
-		      console.log('Node selected: ' + JSON.stringify(node.data));
-		    },
-		    epoch:1500,
-			coolingFactor: 0.8,
-			minAdaption:0.4,
-			maxAdaption:0.6,
-			interval:2,
-			minRadius:1,
-			maxRadius:20,
-			layoutType:"disc",
-			layoutSize:{minRadius:2,maxRadius:5},
-			layout:'isom',
+// 	jQuery(function(){
+// 		  var springy = window.springy = jQuery('#springydemoisom2').springy({
+// 		    graph: graph,
+// 		    nodeSelected: function(node){
+// 		      console.log('Node selected: ' + JSON.stringify(node.data));
+// 		    },
+// 		    epoch:1500,
+// 			coolingFactor: 0.8,
+// 			minAdaption:0.4,
+// 			maxAdaption:0.6,
+// 			interval:2,
+// 			minRadius:1,
+// 			maxRadius:20,
+// 			layoutType:"disc",
+// 			layoutSize:{minRadius:2,maxRadius:5},
+// 			layout:'isom',
 		    
-		  });
-		});
+// 		  });
+// 		});
 		
-	jQuery(function(){
-		  var springy = window.springy = jQuery('#springydemoisom3').springy({
-		    graph: graph,
-		    nodeSelected: function(node){
-		      console.log('Node selected: ' + JSON.stringify(node.data));
-		    },
-		    epoch:1500,
-			coolingFactor: 0.8,
-			minAdaption:0.3,
-			maxAdaption:0.8,
-			interval:2,
-			minRadius:0,
-			maxRadius:20,
-			layoutType:'circle',
-			layoutSize:3,
-			layout:'isom',
-		  });
-		});
+// 	jQuery(function(){
+// 		  var springy = window.springy = jQuery('#springydemoisom3').springy({
+// 		    graph: graph,
+// 		    nodeSelected: function(node){
+// 		      console.log('Node selected: ' + JSON.stringify(node.data));
+// 		    },
+// 		    epoch:1500,
+// 			coolingFactor: 0.8,
+// 			minAdaption:0.3,
+// 			maxAdaption:0.8,
+// 			interval:2,
+// 			minRadius:0,
+// 			maxRadius:20,
+// 			layoutType:'circle',
+// 			layoutSize:3,
+// 			layout:'isom',
+// 		  });
+// 		});
 	jQuery(function(){
 		  var springy = window.springy2 = jQuery('#springydemoforcedirect').springy({
 		    graph: graph,
@@ -2141,7 +2141,7 @@ var dennis = graph.newNode({
 		});
 	</script>
 	<h1>Isom layout</h1>
-	<canvas id="springydemoisom" width="2000" height="1500" ></canvas>
+	<canvas id="springydemoisom" width="2000" height="2500" ></canvas>
 	<h1>Isom layout 1</h1>
 	<canvas id="springydemoisom1" width="2000" height="1500" ></canvas>
 	<h1>Isom layout 2 </h1>
@@ -2149,7 +2149,7 @@ var dennis = graph.newNode({
 	<h1>Isom layout 3 </h1>
 	<canvas id="springydemoisom3" width="2000" height="1500" ></canvas>
 	<h1>Force Directed layout</h1>
-	<canvas id="springydemoforcedirect" width="2000" height="1500"></canvas>
+	<canvas id="springydemoforcedirect" width="2000" height="2500"></canvas>
 	</body>
 
 	</html>

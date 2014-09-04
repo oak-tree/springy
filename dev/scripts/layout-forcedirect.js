@@ -83,11 +83,26 @@
 		this.iteration++;
 	}
 
+	Layout.ForceDirected.prototype.change = function(eventname,obj){
+		switch (eventname){
+		case "springy:add:node":
+		case "springy:remove:node":
+		case "springy:deattach:node":
+		case "springy:add:edge":
+		case "springy:remove:edge":
+			this.physics.change(eventname,obj);
+			return (this.physics.started);
+			break;		
+		}
+		
+		
+		return false;
+	}
 	var WebWorker = Layout.ForceDirected.WebWorker = {};
 
 	Layout.ForceDirected.WebWorker = function(layout, graph, stiffness, repulsion, damping,
 			minEnergyThreshold) {
-		var physics = this.physics = new Worker('../scripts/physics.js');
+		var physics = this.worker = this.physics = new Worker('../scripts/physics.js');
 		// setup worker to load its structure. but NOT yet start to calculate
 		this.message('hello');
 
@@ -113,7 +128,7 @@
 			console.log('Receiving from Worker: ' + event.data);
 			switch (event.data.type) {
 			case "update":
-				// TODO update data from data.calculated
+
 				layout.copyToGraph(event.data.calculated);
 				break;
 			case "stop":
@@ -126,7 +141,7 @@
 	Layout.ForceDirected.WebWorker.prototype.start = function() {
 		this.physics.postMessage({
 			type : "start",
-			layout : JSON.stringify(this.layoutData)
+			params : JSON.stringify(this.layoutData)
 		});
 		this.started = true;
 	}
@@ -153,6 +168,11 @@
 		this.started = false;
 	}
 
+	Layout.ForceDirected.WebWorker.prototype.change = function(eventName,eventObj) {
+		this.physics.postMessage({
+			type : "change",eventname:eventName,eventobj:JSON.stringify(eventObj)
+		});
+	}
 	Layout.ForceDirected.WebWorker.prototype.message = function(message) {
 		this.physics.postMessage({
 			type : message

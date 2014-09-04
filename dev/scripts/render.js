@@ -17,11 +17,22 @@
 		this.onRenderStop = onRenderStop;
 		this.onRenderStart = onRenderStart;
 
-		this.layout.graph.addGraphListener(this);
+		this.layout.graph.addGraphListener({callback:this.graphChanged,context:this})
 	}
 
-	Renderer.prototype.graphChanged = function(e) {
-		this.start();
+	/**
+	 * @class @Render
+	 * @method graphChanged
+	 * @param {String} eventname - springy graph event name
+	 * @param {Node|Edge| object - the related object event
+	 */
+	Renderer.prototype.graphChanged = function(eventname, eventobj) {
+		//names = eventname.split(':')
+
+		 if ( this.layout.change(eventname, eventobj)) { }
+
+		 this.start();		
+		
 	};
 
 	/**

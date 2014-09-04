@@ -166,18 +166,27 @@ Matrix.prototype.set = function( row, col, value) {
  * springy:remove:edge,edge
  * springy:deattach:node,node
  */
-var Graph = Springy.Graph = function() {
+var Graph = Springy.Graph = function(graph) {
+		graph = graph || {};
 		this.nodeSet = {};
-		this.nodes = [];
-		this.edges = [];
-		this.adjacency = {};
-		this.reverseAdj  = {};
+		this.nodes = graph.nodes ||[];
+		this.edges = graph.edges || [];
+		this.adjacency = graph.adjacency || {};
+		this.reverseAdj  = graph.reverseAdj || {};
 
 		this.nextNodeId = 0;
 		this.nextEdgeId = 0;
 		this.eventListeners = [];
 	};
 
+	//function to update graph data
+	Graph.prototype.updateData = function(adjacency, nodes,edges,reverseAdj) {
+		this.adjacency = adjacency;
+		this.nodes = nodes;
+		this.edges = edges;
+		this.reverseAdj = reverseAdj;
+
+	}
 	var Node = Springy.Node = function(id, data) {
 		this.id = id;
 		this.data = (data !== undefined) ? data : {};
@@ -379,6 +388,7 @@ var Graph = Springy.Graph = function() {
 			}
 		}
 
+		this.notify("springy:remove:node",node);
 		this.detachNode(node);
 	};
 
@@ -424,7 +434,7 @@ var Graph = Springy.Graph = function() {
 			}
 		}
 		
-		removeEdgeToreverseAdj(edge);
+		this.removeEdgeToreverseAdj(edge);
 		
 		this.notify("springy:remove:edge",edge);
 		
@@ -480,8 +490,9 @@ var Graph = Springy.Graph = function() {
 	};
 
 	Graph.prototype.notify = function() {
+		var args = arguments;
 		this.eventListeners.forEach(function(obj) {
-			obj.graphChanged.apply(obj,arguments);
+			obj.callback.apply(obj.context,args);
 		});
 	};
 // -----------
@@ -569,11 +580,26 @@ var Graph = Springy.Graph = function() {
 		this.iteration++;
 	}
 
+	Layout.ForceDirected.prototype.change = function(eventname,obj){
+		switch (eventname){
+		case "springy:add:node":
+		case "springy:remove:node":
+		case "springy:deattach:node":
+		case "springy:add:edge":
+		case "springy:remove:edge":
+			this.physics.change(eventname,obj);
+			return (this.physics.started);
+			break;		
+		}
+		
+		
+		return false;
+	}
 	var WebWorker = Layout.ForceDirected.WebWorker = {};
 
 	Layout.ForceDirected.WebWorker = function(layout, graph, stiffness, repulsion, damping,
 			minEnergyThreshold) {
-		var physics = this.physics = new Worker('../scripts/physics.js');
+		var physics = this.worker = this.physics = new Worker('../scripts/physics.js');
 		// setup worker to load its structure. but NOT yet start to calculate
 		this.message('hello');
 
@@ -599,7 +625,7 @@ var Graph = Springy.Graph = function() {
 			console.log('Receiving from Worker: ' + event.data);
 			switch (event.data.type) {
 			case "update":
-				// TODO update data from data.calculated
+
 				layout.copyToGraph(event.data.calculated);
 				break;
 			case "stop":
@@ -612,7 +638,7 @@ var Graph = Springy.Graph = function() {
 	Layout.ForceDirected.WebWorker.prototype.start = function() {
 		this.physics.postMessage({
 			type : "start",
-			layout : JSON.stringify(this.layoutData)
+			params : JSON.stringify(this.layoutData)
 		});
 		this.started = true;
 	}
@@ -639,6 +665,11 @@ var Graph = Springy.Graph = function() {
 		this.started = false;
 	}
 
+	Layout.ForceDirected.WebWorker.prototype.change = function(eventName,eventObj) {
+		this.physics.postMessage({
+			type : "change",eventname:eventName,eventobj:JSON.stringify(eventObj)
+		});
+	}
 	Layout.ForceDirected.WebWorker.prototype.message = function(message) {
 		this.physics.postMessage({
 			type : message
@@ -846,6 +877,22 @@ var Graph = Springy.Graph = function() {
 		this.boundingBox = calculated.boundingBox;
 		this.iteration++;
 	}
+	
+	Layout.ISOM.prototype.change = function(eventname,obj){
+		switch (eventname){
+		case "springy:add:node":
+		case "springy:remove:node":
+		case "springy:deattach:node":
+		case "springy:add:edge":
+		case "springy:remove:edge":
+			this.isom.change(eventname,obj);
+			return (this.isom.started);
+			break;		
+		}
+		
+		
+		return false;
+	}
 
 	var WebWorker = Layout.ISOM.WebWorker = {};
 
@@ -889,7 +936,7 @@ var Graph = Springy.Graph = function() {
 		//TODO . check if this is soft start or not
 		this.worker.postMessage({
 			type : "start",
-			layout : JSON.stringify(this.layoutData)
+			params : JSON.stringify(this.layoutData)
 		});
 		this.started = true;
 	}
@@ -914,6 +961,12 @@ var Graph = Springy.Graph = function() {
 	Layout.ISOM.WebWorker.prototype.destroy = function() {
 		this.message("destory");
 		this.started = false;
+	}
+	
+	Layout.ISOM.WebWorker.prototype.change = function(eventName,eventObj) {
+		this.worker.postMessage({
+			type : "change",eventname:eventName,eventobj:JSON.stringify(eventObj)
+		});
 	}
 
 	Layout.ISOM.WebWorker.prototype.message = function(message) {
@@ -1058,11 +1111,22 @@ var Graph = Springy.Graph = function() {
 		this.onRenderStop = onRenderStop;
 		this.onRenderStart = onRenderStart;
 
-		this.layout.graph.addGraphListener(this);
+		this.layout.graph.addGraphListener({callback:this.graphChanged,context:this})
 	}
 
-	Renderer.prototype.graphChanged = function(e) {
-		this.start();
+	/**
+	 * @class @Render
+	 * @method graphChanged
+	 * @param {String} eventname - springy graph event name
+	 * @param {Node|Edge| object - the related object event
+	 */
+	Renderer.prototype.graphChanged = function(eventname, eventobj) {
+		//names = eventname.split(':')
+
+		 if ( this.layout.change(eventname, eventobj)) { }
+
+		 this.start();		
+		
 	};
 
 	/**

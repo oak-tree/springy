@@ -7,18 +7,27 @@
  * springy:remove:edge,edge
  * springy:deattach:node,node
  */
-var Graph = Springy.Graph = function() {
+var Graph = Springy.Graph = function(graph) {
+		graph = graph || {};
 		this.nodeSet = {};
-		this.nodes = [];
-		this.edges = [];
-		this.adjacency = {};
-		this.reverseAdj  = {};
+		this.nodes = graph.nodes ||[];
+		this.edges = graph.edges || [];
+		this.adjacency = graph.adjacency || {};
+		this.reverseAdj  = graph.reverseAdj || {};
 
 		this.nextNodeId = 0;
 		this.nextEdgeId = 0;
 		this.eventListeners = [];
 	};
 
+	//function to update graph data
+	Graph.prototype.updateData = function(adjacency, nodes,edges,reverseAdj) {
+		this.adjacency = adjacency;
+		this.nodes = nodes;
+		this.edges = edges;
+		this.reverseAdj = reverseAdj;
+
+	}
 	var Node = Springy.Node = function(id, data) {
 		this.id = id;
 		this.data = (data !== undefined) ? data : {};
@@ -220,6 +229,7 @@ var Graph = Springy.Graph = function() {
 			}
 		}
 
+		this.notify("springy:remove:node",node);
 		this.detachNode(node);
 	};
 
@@ -265,7 +275,7 @@ var Graph = Springy.Graph = function() {
 			}
 		}
 		
-		removeEdgeToreverseAdj(edge);
+		this.removeEdgeToreverseAdj(edge);
 		
 		this.notify("springy:remove:edge",edge);
 		
@@ -321,7 +331,8 @@ var Graph = Springy.Graph = function() {
 	};
 
 	Graph.prototype.notify = function() {
+		var args = arguments;
 		this.eventListeners.forEach(function(obj) {
-			obj.graphChanged.apply(obj,arguments);
+			obj.callback.apply(obj.context,args);
 		});
 	};

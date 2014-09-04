@@ -1,50 +1,23 @@
 var layout = null;
 
 var Springy = {};
+importScripts('helpers.js');
 importScripts('math.js');
-importScripts('basicgraph.js');
+importScripts('graph.js');
+importScripts('protocol.js');
 
-self.addEventListener('message', function(event) {
 
-	/* get graph data from event.data.graph */
-	var data = {}
+/**
+ * helper function to create the layout
+ * @method createLayout
+ */
+var createLayout = function(params){
+	/*create the layout object */
+	return  new Layout.ISOM(new Graph(params.graph),
+			params.options, params.graph.nodePoints,
+			params.boundingBox)
 
-	switch (event.data.type) {
-	case "start":
-		data.layout = JSON.parse(event.data.layout);
-		/* create the layout object */
-		layout = self.layout = new Layout.ISOM(new Graph(data.layout.graph),
-				data.layout.options, data.layout.graph.nodePoints,
-				data.layout.boundingBox)
-
-		/* run it */
-		layout.start();
-		break;
-	case "restart":
-		if ((!layout._started) && (layout.isFirstRun())) {
-			layout.start()
-		} else {
-			console.log('soft restart');
-//			layout.softRestart();
-			layout.start(layout.epoch)
-			//TODO soft start
-		}
-		break;
-	case "stop":
-		/* stop layout */
-		layout.stop();
-		break;
-	case "destroy":
-		/* stop layout */
-		self.close();
-		break;
-	case "update":
-		var nodeData = JSON.parse(event.data.nodeData);
-		layout.update(nodeData);
-		/* update graph data */
-		// TODO update the graph data
-	}
-});
+}
 
 Layout = {}
 
@@ -64,7 +37,7 @@ Layout.ISOM = function(graph, options, nodePoints, boudingBox) {
 	this.maxRadius = options.maxRadius;// stop
 
 	this.nodePoints = {};
-	
+	this._started = false; 
 	var DEFAULT_LAYOUT_STR = "",DEFAULT_LAYOUT_SIZE  = 5;
 	this.layoutType = options.layoutType || DEFAULT_LAYOUT_STR;
 	this.layoutSize = options.layoutSize || DEFAULT_LAYOUT_SIZE;
@@ -76,6 +49,93 @@ Layout.ISOM = function(graph, options, nodePoints, boudingBox) {
 	this.floydWarshall();
 };
 
+/**
+ * capture change message and check if there is something to change
+ * @param node
+ */
+Layout.ISOM.prototype.change = function(eventname,obj){
+	switch (eventname){
+		case "springy:add:node":
+			this.addNode(obj);
+		break;
+		
+		case "springy:remove:node":
+			this.removeNode(obj)
+		break;
+		
+		case "springy:deattach:node":
+			this.deattachNode(obj)
+		break;
+		
+		case "springy:add:edge":
+			this.addEdge(obj);
+		break;
+		
+		case "springy:remove:edge":
+			this.removeEdge(obj);
+		break;
+	}
+}
+
+/**
+ * add new node - new point
+ * @param node
+ */
+Layout.ISOM.prototype.addNode = function(node)  {
+	this.graph.addNode(node);
+	//
+}
+/**
+ * make sure to remove node point and then detach it from all other nodes/springs
+ * @param node
+ */
+Layout.ISOM.prototype.removeNode = function(node)  {
+	this.graph.removeNode(node);
+	delete this.nodePoints[node.id]
+	//TODO update graph distance matrix
+}
+/**
+ * make sure to remove all springs related to this node
+ * @method deattachNode
+ */
+Layout.ISOM.prototype.deattachNode = function(node) {
+	this.graph.detachNode(node);
+	//TODO update graph distance matrix
+}
+
+/**
+ * remove the spring related to this edge
+ * @param edge
+ */
+Layout.ISOM.prototype.removeEdge = function(edge) {
+	this.graph.removeEdge(edge);
+	//TODO update graph distance matrix
+}
+
+/**
+ * add a spring for this edge
+ * @param edge
+ */
+Layout.ISOM.prototype.addEdge = function(edge) {
+	this.graph.addEdge(edge);
+	//TODO update graph distance matrix
+}
+
+
+//update node while running the simulation
+Layout.ISOM.prototype.update = function(nodeData) {
+	var node = nodeData.node;
+	var point = nodeData.point
+	if (!(node.id in this.nodePoints)) {
+		return;
+	}
+	this._wait = true; // tell step to wait with update
+	this.nodePoints[node.id].m = point.m;
+	this.nodePoints[node.id].p.x =  point.p.x;
+	this.nodePoints[node.id].p.y =  point.p.y;
+	this._wait = false;
+	
+}
 
 Layout.ISOM.prototype.softRestart = function(options) {
 	var options = options || this.options;
@@ -196,20 +256,6 @@ Layout.ISOM.prototype.floydWarshall = function() {
 		}
 	}
 	this.dist = dist;
-}
-// update node while running the simulation
-Layout.ISOM.prototype.update = function(nodeData) {
-	var node = nodeData.node;
-	var point = nodeData.point
-	if (!(node.id in this.nodePoints)) {
-		return;
-	}
-	this._wait = true; // tell step to wait with update
-	this.nodePoints[node.id].m = point.m;
-	this.nodePoints[node.id].p.x = point.p.x;
-	this.nodePoints[node.id].p.y = point.p.y;
-	this._wait = false;
-
 }
 
 Layout.ISOM.prototype.point = function(node) {
@@ -450,3 +496,15 @@ Layout.ISOM.prototype.start = function(timestep) {
 	}
 	step();
 };
+
+
+
+Layout.ISOM.prototype.restart = function(timestep) {
+	if ((!this._started) && (this.isFirstRun())) {
+		this.start()
+	} else {
+		console.log('soft restart');
+		this.start(Math.max(this.epoch-50,0))
+		//TODO soft start
+	}
+}

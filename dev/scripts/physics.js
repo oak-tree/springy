@@ -2,48 +2,23 @@ var layout = null;
 
 var Springy = {};
 importScripts('math.js');
-importScripts('basicgraph.js');
+importScripts('helpers.js');
+importScripts('graph.js');
+importScripts('protocol.js');
 
-self.addEventListener('message',  function(event){
+
+/**
+ * helper function to create the layout
+ * @method createLayout
+ */
+var createLayout = function(params){
+	/*create the layout object */
+	return  new Layout.ForceDirected(new Graph(params.graph) ,params.stiffness ,params.repulsion ,params.damping ,params.minEnergyThreshold,
+			params.graph.edgeSprings,
+			params.graph.nodePoints,
+			params.boundingBox)
 	
-	/* get graph data from event.data.graph*/
-	var data = {}  
-
-	switch (event.data.type) {
-			case "start":
-				data.layout = JSON.parse(event.data.layout);				
-				/*create the layout object */
-				layout = self.layout = new Layout.ForceDirected(new Graph(data.layout.graph) ,data.layout.stiffness ,data.layout.repulsion ,data.layout.damping ,data.layout.minEnergyThreshold,
-						data.layout.graph.edgeSprings,
-						data.layout.graph.nodePoints,
-						data.layout.boundingBox)
-				
-				/* run it */
-				layout.start();
-				break;
-			case "restart":
-				if (!layout._started){
-					layout.start()
-				}
-				break;
-			case "stop":
-				/* stop layout */
-				layout.stop();
-				break;
-			case "destroy":
-				/* stop layout */
-				self.close();
-				break;
-			case "update":
-				var nodeData = JSON.parse(event.data.nodeData);
-				layout.update(nodeData);
-				/* update graph data*/
-				//TODO update the graph data
-	}
-});
-
-
-
+}
 
 Layout = {}
 
@@ -51,6 +26,8 @@ var Layout = Springy.Layout = {};
 
 Layout.ForceDirected = function(graph, stiffness, repulsion, damping,
 		minEnergyThreshold,edgeSprings,nodePoints,boudingBox) {
+	
+	this._started = false;
 	this.graph = graph;
 	this.stiffness = stiffness; // spring stiffness constant
 	this.repulsion = repulsion; // repulsion constant
@@ -64,6 +41,73 @@ Layout.ForceDirected = function(graph, stiffness, repulsion, damping,
 	
 };
 
+/**
+ * capture change message and check if there is something to change
+ * @param node
+ */
+Layout.ForceDirected.prototype.change = function(eventname,obj){
+	switch (eventname){
+		case "springy:add:node":
+			this.addNode(obj);
+		break;
+		
+		case "springy:remove:node":
+			this.removeNode(obj)
+		break;
+		
+		case "springy:deattach:node":
+			this.deattachNode(obj)
+		break;
+		
+		case "springy:add:edge":
+			this.addEdge(obj);
+		break;
+		
+		case "springy:remove:edge":
+			this.removeEdge(obj);
+		break;
+	}
+}
+
+/**
+ * add new node - new point
+ * @param node
+ */
+Layout.ForceDirected.prototype.addNode = function(node)  {
+	this.graph.addNode(node);
+}
+/**
+ * make sure to remove node point and then detach it from all other nodes/springs
+ * @param node
+ */
+Layout.ForceDirected.prototype.removeNode = function(node)  {
+	this.graph.removeNode(node);
+	delete this.nodePoints[node.id]
+}
+/**
+ * make sure to remove all springs related to this node
+ * @method deattachNode
+ */
+Layout.ForceDirected.prototype.deattachNode = function(node) {
+	this.graph.detachNode(node);
+}
+
+/**
+ * remove the spring related to this edge
+ * @param edge
+ */
+Layout.ForceDirected.prototype.removeEdge = function(edge) {
+	this.graph.removeEdge(edge);
+	delete this.edgeSprings[edge.id];
+}
+
+/**
+ * add a spring for this edge
+ * @param edge
+ */
+Layout.ForceDirected.prototype.addEdge = function(edge) {
+		this.graph.addEdge(edge);
+}
 
 
 //update node while running the simulation
@@ -113,7 +157,11 @@ Layout.ForceDirected.prototype.start = function() {
 	
 	step();
 };
-
+Layout.ForceDirected.prototype.restart = function(){
+	if (!this._started){
+		this.start()
+	}
+}
 Layout.ForceDirected.prototype.stop = function() {
 	this._stop = true;
 }

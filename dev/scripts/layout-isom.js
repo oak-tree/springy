@@ -89,6 +89,22 @@
 		this.boundingBox = calculated.boundingBox;
 		this.iteration++;
 	}
+	
+	Layout.ISOM.prototype.change = function(eventname,obj){
+		switch (eventname){
+		case "springy:add:node":
+		case "springy:remove:node":
+		case "springy:deattach:node":
+		case "springy:add:edge":
+		case "springy:remove:edge":
+			this.isom.change(eventname,obj);
+			return (this.isom.started);
+			break;		
+		}
+		
+		
+		return false;
+	}
 
 	var WebWorker = Layout.ISOM.WebWorker = {};
 
@@ -132,7 +148,7 @@
 		//TODO . check if this is soft start or not
 		this.worker.postMessage({
 			type : "start",
-			layout : JSON.stringify(this.layoutData)
+			params : JSON.stringify(this.layoutData)
 		});
 		this.started = true;
 	}
@@ -157,6 +173,12 @@
 	Layout.ISOM.WebWorker.prototype.destroy = function() {
 		this.message("destory");
 		this.started = false;
+	}
+	
+	Layout.ISOM.WebWorker.prototype.change = function(eventName,eventObj) {
+		this.worker.postMessage({
+			type : "change",eventname:eventName,eventobj:JSON.stringify(eventObj)
+		});
 	}
 
 	Layout.ISOM.WebWorker.prototype.message = function(message) {
