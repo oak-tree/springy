@@ -111,7 +111,35 @@ Layout.ISOM.prototype.initialize = function() {
 		// TODO set random position for this node
 	})
 };
-
+Layout.ISOM.prototype.path = function(node,walked,radius, maxRadius,callback){
+	/* do not walked more than the max radius distance */
+	if (radius > maxRadius) return 
+	/* if walked already do not walked again */
+	if (node.id in walked) return
+	/* mark as walked */
+	walked[node.id]  = 1;
+	/*
+	 * for each edge of this node find the target node *
+	 * 
+	 */
+	var adj = this.graph.adjacency;
+	if (node.id in adj) {
+		for (var a in adj[node.id]){
+			this.path(adj[node.id][a][0].target,walked,radius + 1 ,maxRadius,callback);
+		}
+	}
+	
+	var reverseAdj = this.graph.reverseAdj;
+	if (node.id in reverseAdj) {
+		for (var a in reverseAdj[node.id]){
+			this.path(reverseAdj[node.id][a][0].source,walked,radius + 1 ,maxRadius,callback);
+		}
+	}
+	
+	/* fire the callback on this node */
+	callback.call(this,node,this.point(node),radius);
+	
+}
 Layout.ISOM.prototype.floydWarshall = function() {
 
 	var N = this.graph.nodes.length;
@@ -266,10 +294,11 @@ Layout.ISOM.prototype.getMinNorm = function(i) {
 	return node;
 }
 
+
 /**
  * update the position of each nodes that in the ball d(w,w_i) <=r
  */
-Layout.ISOM.prototype.updatesNodesByGraphDistance = function(w, i, adapation,
+Layout.ISOM.prototype.updatesNodesByGraphDistanceMatrix = function(w, i, adapation,
 		distance) {
 
 	var isom = this;
@@ -298,6 +327,23 @@ Layout.ISOM.prototype.updatesNodesByGraphDistance = function(w, i, adapation,
 			return;
 		}
 
+		/* if so update */
+		var update = point.p.subtract(i).multiply(
+				adapation * Math.pow(2, -1 * d));
+		point.p = point.p.subtract(update);
+	
+	})
+};
+
+/**
+ * update the position of each nodes that in the ball d(w,w_i) <=r
+ */
+Layout.ISOM.prototype.updatesNodesByGraphDistance = function(w, i, adapation,
+		distance) {
+
+	var isom = this;
+	this.path(w,[],0,distance, function(v, point,d) {
+		
 		/* if so update */
 		var update = point.p.subtract(i).multiply(
 				adapation * Math.pow(2, -1 * d));
@@ -341,6 +387,7 @@ Layout.ISOM.prototype.tick = function(timestep, r) {
 	var w = this.getMinNorm(i);
 
 	this.updatesNodesByGraphDistance(w, i, adapation, r);
+//	this.updatesNodesByGraphDistanceMatrix(w, i, adapation, r);
 	this.updateBoundingBox();
 
 };

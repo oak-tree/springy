@@ -101,6 +101,7 @@
 		this.layoutData = {
 			graph : {
 				adjacency : graph.adjacency,
+				reverseAdj: graph.reverseAdj,
 				nodes : graph.nodes,
 				edges : graph.edges,
 				nodePoints: layout.nodePoints,
