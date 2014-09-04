@@ -1,13 +1,15 @@
 
 //Basic Graph object to hold graph data
 Graph = function(graph) {
-	this.updateData(graph.adjacency, graph.nodes,graph.edges);
+	this.updateData(graph.adjacency, graph.nodes,graph.edges,graph.reverseAdj);
 }
 //function to update graph data
-Graph.prototype.updateData = function(adjacency, nodes,edges) {
+Graph.prototype.updateData = function(adjacency, nodes,edges,reverseAdj) {
 	this.adjacency = adjacency;
 	this.nodes = nodes;
 	this.edges = edges;
+	this.reverseAdj = reverseAdj;
+
 }
 
 // find the edges from node1 to node2

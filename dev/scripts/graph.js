@@ -1,8 +1,18 @@
+
+/**
+ * @class Springy.Graph
+ * @events
+ * springy:add:node,node
+ * springy:add:edge,edge
+ * springy:remove:edge,edge
+ * springy:deattach:node,node
+ */
 var Graph = Springy.Graph = function() {
 		this.nodeSet = {};
 		this.nodes = [];
 		this.edges = [];
 		this.adjacency = {};
+		this.reverseAdj  = {};
 
 		this.nextNodeId = 0;
 		this.nextEdgeId = 0;
@@ -37,7 +47,7 @@ var Graph = Springy.Graph = function() {
 
 		this.nodeSet[node.id] = node;
 
-		this.notify();
+		this.notify("springy:add:node",node);
 		return node;
 	};
 
@@ -52,7 +62,55 @@ var Graph = Springy.Graph = function() {
 			this.addNode(node);
 		}
 	};
+	
+	Graph.prototype.addEdgeToreverseAdj = function(edge) {
+		
+		if (!(edge.target.id in this.reverseAdj)) {
+			this.reverseAdj[edge.target.id] = {};
+		}
+		if (!(edge.source.id in this.reverseAdj[edge.target.id])) {
+			this.reverseAdj[edge.target.id][edge.source.id] = [];
+		}
 
+		var exists = false;
+		this.reverseAdj[edge.target.id][edge.source.id].forEach(function(e) {
+			if (edge.id === e.id) {
+				exists = true;
+			}
+		});
+
+		if (!exists) {
+			this.reverseAdj[edge.target.id][edge.source.id].push(edge);
+		}
+		
+	}
+	Graph.prototype.removeEdgeToreverseAdj = function(edge) {
+		
+		
+		for ( var x in this.reverseAdj) {
+			for ( var y in this.reverseAdj[x]) {
+				var edges = this.reverseAdj[x][y];
+
+				for (var j = edges.length - 1; j >= 0; j--) {
+					if (this.reverseAdj[x][y][j].id === edge.id) {
+						this.reverseAdj[x][y].splice(j, 1);
+					}
+				}
+
+				// Clean up empty edge arrays
+				if (this.reverseAdj[x][y].length == 0) {
+					delete this.reverseAdj[x][y];
+				}
+			}
+
+			// Clean up empty objects
+			if (isEmpty(this.reverseAdj[x])) {
+				delete this.reverseAdj[x];
+			}
+		}
+
+	}
+	
 	Graph.prototype.addEdge = function(edge) {
 		var exists = false;
 		this.edges.forEach(function(e) {
@@ -82,8 +140,10 @@ var Graph = Springy.Graph = function() {
 		if (!exists) {
 			this.adjacency[edge.source.id][edge.target.id].push(edge);
 		}
+		
+		this.addEdgeToreverseAdj(edge)
 
-		this.notify();
+		this.notify("springy:add:edge",edge);
 		return edge;
 	};
 
@@ -172,7 +232,7 @@ var Graph = Springy.Graph = function() {
 			}
 		}, this);
 
-		this.notify();
+		this.notify("springy:deattach:node",node);
 	};
 
 	// remove a node and it's associated edges from the graph
@@ -204,8 +264,11 @@ var Graph = Springy.Graph = function() {
 				delete this.adjacency[x];
 			}
 		}
-
-		this.notify();
+		
+		removeEdgeToreverseAdj(edge);
+		
+		this.notify("springy:remove:edge",edge);
+		
 	};
 
 	/*
@@ -259,6 +322,6 @@ var Graph = Springy.Graph = function() {
 
 	Graph.prototype.notify = function() {
 		this.eventListeners.forEach(function(obj) {
-			obj.graphChanged();
+			obj.graphChanged.apply(obj,arguments);
 		});
 	};
